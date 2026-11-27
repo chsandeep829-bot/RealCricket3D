@@ -14,7 +14,7 @@ PlayerSettings:
   defaultScreenWidthWeb: 960
   defaultScreenHeightWeb: 600
   m_SplashScreenBackgroundColor: {r: 0.025, g: 0.055, b: 0.10, a: 1}
-  companyName: Sandeep Studio
+  companyName: Real Cricket Studios
   productName: REAL CRICKET 3D
   bundleVersion: 0.1.0
   applicationIdentifier:
