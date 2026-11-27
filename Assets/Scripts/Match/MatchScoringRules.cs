@@ -44,7 +44,8 @@ public class MatchScoringRules : MonoBehaviour
     public void WicketOnLegalDelivery()
     {
         if (matchManager == null) return;
-        matchManager.RecordWicket();
+        // Count the delivery before the wicket so the final wicket still records the ball.
         matchManager.RecordLegalDelivery();
+        matchManager.RecordWicket();
     }
 }
