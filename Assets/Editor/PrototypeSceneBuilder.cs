@@ -69,6 +69,11 @@ public static class PrototypeSceneBuilder
         SetObjectReference(progression, "matchManager", match);
         SetObjectReference(progression, "careerSave", careerSave);
         SetObjectReference(progression, "tournament", tournament);
+        CricketPostMatchMenuController postMatch =
+            matchObject.AddComponent<CricketPostMatchMenuController>();
+        SetObjectReference(postMatch, "matchManager", match);
+        SetObjectReference(postMatch, "careerSave", careerSave);
+        SetObjectReference(postMatch, "tournament", tournament);
 
         GameObject bowlingObject = new GameObject("BowlingController");
         BowlingController bowling = bowlingObject.AddComponent<BowlingController>();
@@ -288,6 +293,7 @@ public static class PrototypeSceneBuilder
         CreateButton(canvas.transform, "PAUSE / RESUME",
             new Vector2(0.94f, 0.93f), pauseController.TogglePause);
         CreateMatchSetupMenu(canvas.transform, matchSetup);
+        CreatePostMatchMenu(canvas.transform, postMatch);
     }
 
 
@@ -358,6 +364,34 @@ public static class PrototypeSceneBuilder
         text.color = Color.white;
         text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
         return text;
+    }
+
+
+    private static void CreatePostMatchMenu(Transform canvas, CricketPostMatchMenuController controller)
+    {
+        GameObject panel = new GameObject("PostMatchResultPanel",
+            typeof(RectTransform), typeof(Image));
+        panel.transform.SetParent(canvas, false);
+        RectTransform rect = panel.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.12f, 0.20f);
+        rect.anchorMax = new Vector2(0.88f, 0.80f);
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        panel.GetComponent<Image>().color = new Color(0.015f, 0.035f, 0.07f, 0.98f);
+
+        Text result = CreateMenuText(panel.transform, "MATCH RESULT",
+            new Vector2(0.5f, 0.78f), new Vector2(1000f, 100f), 38);
+        Text career = CreateMenuText(panel.transform, "CAREER SUMMARY",
+            new Vector2(0.5f, 0.48f), new Vector2(1100f, 130f), 26);
+        SetObjectReference(controller, "resultPanel", panel);
+        SetObjectReference(controller, "resultText", result);
+        SetObjectReference(controller, "careerText", career);
+
+        CreateButton(panel.transform, "NEXT TOURNAMENT MATCH",
+            new Vector2(0.35f, 0.16f), controller.StartNextTournamentFixture);
+        CreateButton(panel.transform, "CLOSE",
+            new Vector2(0.70f, 0.16f), controller.CloseResultPanel);
+        panel.SetActive(false);
     }
 
     private static void CreateSwipeArea(Transform parent, ShotSelectionController shots)
