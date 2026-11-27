@@ -268,7 +268,10 @@ public static class PrototypeSceneBuilder
         CreateButton(canvas.transform, "2 RUN", new Vector2(0.44f, 0.08f), running.RequestTwoRuns);
         CreateButton(canvas.transform, "DRIVE", new Vector2(0.32f, 0.08f), shots.SelectDrive);
         CreateButton(canvas.transform, "PULL", new Vector2(0.20f, 0.08f), shots.SelectPull);
-        CreateButton(canvas.transform, "LOFT", new Vector2(0.08f, 0.08f), shots.SelectLofted);
+        CreateButton(canvas.transform, "LOFT", new Vector2(0.18f, 0.18f), shots.SelectLofted);
+        CreateButton(canvas.transform, "STROKE", new Vector2(0.40f, 0.18f), shots.SelectStroke);
+        CreateButton(canvas.transform, "PUSH", new Vector2(0.62f, 0.18f), shots.SelectPush);
+        CreateButton(canvas.transform, "LEAVE", new Vector2(0.84f, 0.18f), shots.SelectLeave);
         CreateButton(canvas.transform, "PAUSE / RESUME",
             new Vector2(0.94f, 0.93f), pauseController.TogglePause);
     }
