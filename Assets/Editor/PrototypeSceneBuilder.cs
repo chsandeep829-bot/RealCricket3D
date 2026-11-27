@@ -418,6 +418,7 @@ public static class PrototypeSceneBuilder
             new Vector2(0.94f, 0.93f), pauseController.TogglePause);
 
         CreateMatchSetupMenu(canvas.transform, matchSetup, controlsRoot);
+        CreatePauseMenu(canvas.transform, pauseController);
         CreatePostMatchMenu(canvas.transform, postMatch);
     }
 
@@ -557,6 +558,37 @@ public static class PrototypeSceneBuilder
         text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.raycastTarget = false;
         return text;
+    }
+
+    private static void CreatePauseMenu(Transform canvas, CricketMatchPauseController controller)
+    {
+        GameObject panel = new GameObject("PauseMenu",
+            typeof(RectTransform), typeof(Image));
+        panel.transform.SetParent(canvas, false);
+        RectTransform rect = panel.GetComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        panel.GetComponent<Image>().color = new Color(0.005f, 0.008f, 0.014f, 0.88f);
+
+        GameObject card = new GameObject("PauseCard", typeof(RectTransform), typeof(Image));
+        card.transform.SetParent(panel.transform, false);
+        RectTransform cardRect = card.GetComponent<RectTransform>();
+        cardRect.anchorMin = new Vector2(0.30f, 0.24f);
+        cardRect.anchorMax = new Vector2(0.70f, 0.76f);
+        cardRect.offsetMin = Vector2.zero;
+        cardRect.offsetMax = Vector2.zero;
+        card.GetComponent<Image>().color = new Color(0.025f, 0.045f, 0.075f, 1f);
+
+        CreateMenuText(card.transform, "MATCH PAUSED",
+            new Vector2(0.5f, 0.70f), new Vector2(700f, 90f), 40);
+        CreateButton(card.transform, "RESUME MATCH",
+            new Vector2(0.5f, 0.38f), controller.Resume,
+            new Vector2(360f, 76f), new Color(0.72f, 0.52f, 0.16f, 1f), 25);
+
+        SetObjectReference(controller, "pausePanel", panel);
+        panel.SetActive(false);
     }
 
     private static void CreatePostMatchMenu(Transform canvas, CricketPostMatchMenuController controller)
