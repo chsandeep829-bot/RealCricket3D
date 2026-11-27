@@ -9,7 +9,7 @@ public class MobileCricketControls : MonoBehaviour
     [SerializeField] private ShotSelectionController shotSelection;
     [SerializeField] private RunningBetweenWicketsController runningController;
 
-    // Connect these public methods to Unity UI Button OnClick events.
+    // Connect these public methods to Unity UI Button/Slider events.
     public void OnBowlPressed()
     {
         if (bowlingController != null) bowlingController.BowlDelivery();
@@ -43,6 +43,16 @@ public class MobileCricketControls : MonoBehaviour
     {
         if (bowlingVariations != null) bowlingVariations.BowlSlow();
         else OnBowlPressed();
+    }
+
+    public void OnBowlingLineChanged(float normalizedLine)
+    {
+        if (bowlingVariations != null) bowlingVariations.SetLine(normalizedLine);
+    }
+
+    public void OnBowlingLengthChanged(float normalizedLength)
+    {
+        if (bowlingVariations != null) bowlingVariations.SetLength(normalizedLength);
     }
 
     public void OnBatPressed()
