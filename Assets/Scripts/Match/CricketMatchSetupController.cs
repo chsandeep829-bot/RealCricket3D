@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class CricketMatchSetupController : MonoBehaviour
 {
     [SerializeField] private MatchManager matchManager;
+    [SerializeField] private CricketTournamentManager tournamentManager;
     [SerializeField] private string[] availableTeams = { "INDIA", "AUSTRALIA", "ENGLAND", "SOUTH AFRICA", "NEW ZEALAND", "PAKISTAN" };
     [SerializeField] private int firstTeamIndex;
     [SerializeField] private int secondTeamIndex = 1;
@@ -86,6 +87,22 @@ public class CricketMatchSetupController : MonoBehaviour
         if (tossWinnerIndex < 0) return;
         tossWinnerBatsFirst = batsFirst;
         StartConfiguredMatch();
+    }
+
+
+    public void CreateFourTeamTournamentAndStart()
+    {
+        if (matchManager == null || tournamentManager == null ||
+            availableTeams == null || availableTeams.Length < 4) return;
+
+        tournamentManager.CreateTournament(
+            availableTeams[0], availableTeams[1], availableTeams[2], availableTeams[3]);
+        string teamA = tournamentManager.GetCurrentTeamA();
+        string teamB = tournamentManager.GetCurrentTeamB();
+        matchManager.ConfigureFormat(CricketMatchFormat.T20);
+        matchManager.SetTeamNames(teamA, teamB);
+        matchManager.StartMatch();
+        if (setupStatus != null) setupStatus.text = "TOURNAMENT STARTED: " + teamA + " vs " + teamB;
     }
 
     public void StartConfiguredMatch()
