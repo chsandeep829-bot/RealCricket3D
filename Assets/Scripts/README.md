@@ -9,6 +9,7 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 - `Gameplay/CricketPlayerAnimator.cs`: sends movement and action parameters/triggers to an assigned Animator Controller; actual animation clips and rig mappings must be supplied separately.
 - `Gameplay/CricketMatchPauseController.cs`: pauses and resumes match time and toggles an optional pause panel.
 - `Fielding/FielderThrowController.cs`: detects a hit ball at a fielder pickup trigger and throws it toward an assigned target; it can be restricted to active running plays.
+- `Fielding/StumpingWicketZone.cs`: records a stumping when an unhit delivery reaches the keeper zone while the striker is outside the configured crease tolerance.
 - `Fielding/FielderCatchZone.cs`: detects a descending airborne hit ball inside a fielder catch volume and records a caught dismissal once.
 - `Fielding/RunOutWicketZone.cs`: detects a hit ball reaching a wicket zone while batters are running, cancels queued runs and records a run-out.
 - `Bowling/BowlingController.cs`: creates and releases a delivery.
@@ -31,7 +32,7 @@ The format and team names can be changed on the MatchManager component in the Un
 1. Open this repository as a Unity project.
 2. Let Unity finish importing and compiling scripts.
 3. Use **RealCricket3D → Build Prototype Scene** from the Unity Editor menu.
-4. Open `Assets/Scenes/CricketPrototype.unity` and press Play.
+4. Open `Assets/Scenes/CricketPrototype.unity` and press Play. The updated builder also creates two batters, running controls, fast/spin bowling controls, basic catch volumes, a run-out zone and a keeper stumping zone.
 5. Assign the generated scene's score text and gameplay references if the builder reports any missing references.
 6. To enable running, add `RunningBetweenWicketsController` to a scene object; assign both batter transforms, the two crease marker transforms and `MatchManager`. Connect mobile Run buttons to `RequestRun` or `RequestTwoRuns`. Set `runSpeed` to tune movement.
 7. For catches, add a trigger collider and `FielderCatchZone` to each fielder's catch area. Assign `MatchManager` and tune the minimum/maximum catch heights. The ball must be hit and descending.
