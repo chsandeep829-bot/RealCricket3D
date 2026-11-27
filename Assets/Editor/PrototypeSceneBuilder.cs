@@ -102,6 +102,10 @@ public static class PrototypeSceneBuilder
         CreateFielderThrowSetup(match, running);
         CreateCatchFielder("LeftSlipFielder", new Vector3(-4f, 0f, -1f), match);
         CreateCatchFielder("RightSlipFielder", new Vector3(4f, 0f, -1f), match);
+
+        GameObject fieldingManager = new GameObject("FieldingTeamManager");
+        fieldingManager.AddComponent<FielderTeamController>();
+
         CreateControls(bowling, variations, batting, shots, running, match);
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -318,6 +322,7 @@ public static class PrototypeSceneBuilder
     private static void CreateCatchFielder(string name, Vector3 position, MatchManager match)
     {
         GameObject fielder = CreatePlayer(name, position, new Color(0.9f, 0.72f, 0.12f));
+        FielderAI fielderAI = fielder.AddComponent<FielderAI>();
         GameObject catchArea = new GameObject("CatchTrigger");
         catchArea.transform.SetParent(fielder.transform);
         catchArea.transform.localPosition = new Vector3(0f, 0.8f, 0f);
@@ -332,6 +337,7 @@ public static class PrototypeSceneBuilder
         RunningBetweenWicketsController running)
     {
         GameObject fielder = CreatePlayer("PrototypeFielder", new Vector3(4f, 0f, 0f), Color.yellow);
+        fielder.AddComponent<FielderAI>();
         GameObject pickup = new GameObject("FielderPickupTrigger");
         pickup.transform.SetParent(fielder.transform);
         pickup.transform.localPosition = Vector3.zero;
