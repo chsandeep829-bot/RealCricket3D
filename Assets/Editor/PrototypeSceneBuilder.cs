@@ -87,6 +87,8 @@ public static class PrototypeSceneBuilder
         SetObjectReference(running, "strikerCrease", CreateCreaseMarker("StrikerCrease", new Vector3(0f, 1f, -4.5f)));
         SetObjectReference(running, "nonStrikerCrease", CreateCreaseMarker("NonStrikerCrease", new Vector3(0f, 1f, 5.5f)));
         SetObjectReference(running, "matchManager", match);
+        CreateRunOutZone(new Vector3(0f, 0.8f, 6.5f), match, running);
+        CreateFielderThrowSetup(match, running);
         CreateControls(bowling, variations, batting, shots, running, match);
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -269,6 +271,34 @@ public static class PrototypeSceneBuilder
         text.alignment = TextAlignmentOptions.Center;
         text.fontSize = 28f;
         text.color = Color.white;
+    }
+
+    private static void CreateRunOutZone(Vector3 position, MatchManager match,
+        RunningBetweenWicketsController running)
+    {
+        GameObject zone = new GameObject("NonStrikerRunOutZone");
+        zone.transform.position = position;
+        BoxCollider collider = zone.AddComponent<BoxCollider>();
+        collider.isTrigger = true;
+        collider.size = new Vector3(1.3f, 1.8f, 0.6f);
+        RunOutWicketZone runOut = zone.AddComponent<RunOutWicketZone>();
+        SetObjectReference(runOut, "matchManager", match);
+        SetObjectReference(runOut, "runningController", running);
+    }
+
+    private static void CreateFielderThrowSetup(MatchManager match,
+        RunningBetweenWicketsController running)
+    {
+        GameObject fielder = CreatePlayer("PrototypeFielder", new Vector3(4f, 0f, 0f), Color.yellow);
+        GameObject pickup = new GameObject("FielderPickupTrigger");
+        pickup.transform.SetParent(fielder.transform);
+        pickup.transform.localPosition = Vector3.zero;
+        SphereCollider trigger = pickup.AddComponent<SphereCollider>();
+        trigger.isTrigger = true;
+        trigger.radius = 1.4f;
+        FielderThrowController thrower = pickup.AddComponent<FielderThrowController>();
+        SetObjectReference(thrower, "throwTarget", GameObject.Find("BowlerStumps").transform);
+        SetObjectReference(thrower, "runningController", running);
     }
 
     private static Transform CreateCreaseMarker(string name, Vector3 position)
