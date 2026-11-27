@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ShotSelectionController : MonoBehaviour
 {
-    public enum ShotType { Defensive, Drive, CoverDrive, Pull, Cut, Sweep, Lofted }
+    public enum ShotType { Defensive, Drive, CoverDrive, Pull, Cut, Sweep, Lofted, Stroke, Push, Leave }
 
     [Header("References")]
     [SerializeField] private BattingController battingController;
@@ -21,6 +21,9 @@ public class ShotSelectionController : MonoBehaviour
     public void SelectCut() => Select(ShotType.Cut);
     public void SelectSweep() => Select(ShotType.Sweep);
     public void SelectLofted() => Select(ShotType.Lofted);
+    public void SelectStroke() => Select(ShotType.Stroke);
+    public void SelectPush() => Select(ShotType.Push);
+    public void SelectLeave() => Select(ShotType.Leave);
 
     public void SetAim(float normalizedAim)
     {
@@ -29,36 +32,20 @@ public class ShotSelectionController : MonoBehaviour
     }
 
     /// <summary>
-    /// Maps a screen swipe to a shot type, aim direction and loft, then plays it.
-    /// Swipe up adds loft; swipe down favours a grounded defensive shot.
-    /// Horizontal movement aims the shot across the field.
+    /// A swipe aims the currently selected shot without changing its type.
+    /// Loft, Stroke, Push and Leave remain separate selections.
     /// </summary>
     public void PlaySwipeShot(Vector2 swipe)
     {
-        float horizontal = Mathf.Clamp(swipe.x, -1f, 1f);
-        float vertical = Mathf.Clamp(swipe.y, -1f, 1f);
-
-        if (vertical > 0.55f)
-            Select(ShotType.Lofted);
-        else if (vertical < -0.55f)
-            Select(ShotType.Defensive);
-        else if (horizontal > 0.45f)
-            Select(ShotType.Pull);
-        else if (horizontal < -0.45f)
-            Select(ShotType.Cut);
-        else
-            Select(ShotType.Drive);
-
-        aimAngle = horizontal * 70f;
-        loftAngle = Mathf.Clamp(Mathf.Lerp(3f, 42f, (vertical + 1f) * 0.5f), 2f, 42f);
+        if (SelectedShot == ShotType.Leave) return;
+        aimAngle = Mathf.Clamp(swipe.x, -1f, 1f) * 70f;
         ApplyAim();
-
-        if (battingController != null)
-            battingController.Swing();
+        PlaySelectedShot();
     }
 
     public void PlaySelectedShot()
     {
+        if (SelectedShot == ShotType.Leave) return;
         ApplyAim();
         if (battingController != null) battingController.Swing();
     }
@@ -66,6 +53,7 @@ public class ShotSelectionController : MonoBehaviour
     private void Select(ShotType shot)
     {
         SelectedShot = shot;
+        if (battingController != null) battingController.SetShotPowerMultiplier(1f);
         switch (shot)
         {
             case ShotType.Defensive: loftAngle = 2f; break;
@@ -74,7 +62,10 @@ public class ShotSelectionController : MonoBehaviour
             case ShotType.Pull: loftAngle = 18f; aimAngle = 35f; break;
             case ShotType.Cut: loftAngle = 8f; aimAngle = 55f; break;
             case ShotType.Sweep: loftAngle = 5f; aimAngle = 70f; break;
-            case ShotType.Lofted: loftAngle = 38f; break;
+            case ShotType.Lofted: loftAngle = 38f; if (battingController != null) battingController.SetShotPowerMultiplier(1.15f); break;
+            case ShotType.Stroke: loftAngle = 10f; aimAngle = 0f; break;
+            case ShotType.Push: loftAngle = 3f; aimAngle = 0f; if (battingController != null) battingController.SetShotPowerMultiplier(0.55f); break;
+            case ShotType.Leave: loftAngle = 0f; break;
         }
         ApplyAim();
     }
