@@ -144,6 +144,16 @@ public class MatchManager : MonoBehaviour
         CheckDeliveryEnd();
     }
 
+    /// <summary>Records a four or six as a completed legal delivery exactly once.</summary>
+    public void RecordBoundaryDelivery(int boundaryRuns)
+    {
+        if (!CanScore() || (boundaryRuns != 4 && boundaryRuns != 6)) return;
+        runs += boundaryRuns;
+        legalBalls++;
+        SaveCurrentInnings();
+        CheckDeliveryEnd();
+    }
+
     public void RecordLegalDelivery()
     {
         if (!CanScore()) return;
