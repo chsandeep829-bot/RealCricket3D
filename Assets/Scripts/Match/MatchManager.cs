@@ -37,6 +37,7 @@ public class MatchManager : MonoBehaviour
     private readonly int[] inningsWickets = new int[4];
     private bool inningsCompleted;
     private bool matchCompleted;
+    private bool matchDraw;
     private int target;
 
     public int Runs => runs;
@@ -82,6 +83,7 @@ public class MatchManager : MonoBehaviour
         inningsNumber = 1;
         target = 0;
         matchCompleted = false;
+        matchDraw = false;
         BeginCurrentInnings();
     }
 
@@ -104,6 +106,15 @@ public class MatchManager : MonoBehaviour
         SaveCurrentInnings();
         if (target > 0 && runs >= target) CompleteMatch();
         else RefreshScoreboard();
+    }
+
+    public void RecordLegalDelivery(int batterRuns)
+    {
+        if (!CanScore() || batterRuns < 0) return;
+        runs += batterRuns;
+        legalBalls++;
+        SaveCurrentInnings();
+        CheckDeliveryEnd();
     }
 
     public void RecordLegalDelivery()
@@ -201,7 +212,7 @@ public class MatchManager : MonoBehaviour
 
         // Only the final innings of a Test match has a chase target.
         if (format == CricketMatchFormat.Test && inningsNumber == 4)
-            target = inningsRuns[0] + inningsRuns[2] - inningsRuns[1] - inningsRuns[3] + 1;
+            target = inningsRuns[0] + inningsRuns[2] - inningsRuns[1] + 1;
         else if (format != CricketMatchFormat.Test && inningsNumber == 2)
             target = inningsRuns[0] + 1;
         else
@@ -234,6 +245,7 @@ public class MatchManager : MonoBehaviour
 
         if (inningsNumber >= InningsCount)
         {
+            if (format == CricketMatchFormat.Test && target > runs) matchDraw = true;
             CompleteMatch();
             return;
         }
@@ -255,6 +267,7 @@ public class MatchManager : MonoBehaviour
     private string GetResultText()
     {
         if (!matchCompleted) return string.Empty;
+        if (matchDraw) return "MATCH DRAWN";
 
         int teamAScore = inningsRuns[0] + (format == CricketMatchFormat.Test ? inningsRuns[2] : 0);
         int teamBScore = inningsRuns[1] + (format == CricketMatchFormat.Test ? inningsRuns[3] : 0);
