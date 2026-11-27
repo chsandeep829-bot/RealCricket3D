@@ -259,6 +259,8 @@ public static class PrototypeSceneBuilder
         scoreText.text = "0/0  0.0";
         SetObjectReference(match, "scoreText", scoreText);
 
+        CreateSwipeArea(canvas.transform, shots);
+
         CreateButton(canvas.transform, "FAST", new Vector2(0.92f, 0.08f), variations.BowlFast);
         CreateButton(canvas.transform, "SPIN", new Vector2(0.80f, 0.08f), variations.BowlOffSpin);
         CreateButton(canvas.transform, "SHOT", new Vector2(0.68f, 0.08f), shots.PlaySelectedShot);
@@ -269,6 +271,26 @@ public static class PrototypeSceneBuilder
         CreateButton(canvas.transform, "LOFT", new Vector2(0.08f, 0.08f), shots.SelectLofted);
         CreateButton(canvas.transform, "PAUSE / RESUME",
             new Vector2(0.94f, 0.93f), pauseController.TogglePause);
+    }
+
+    private static void CreateSwipeArea(Transform parent, ShotSelectionController shots)
+    {
+        GameObject swipeObject = new GameObject("SwipeBattingArea",
+            typeof(RectTransform), typeof(Image), typeof(SwipeBattingInput));
+        swipeObject.transform.SetParent(parent, false);
+
+        RectTransform rect = swipeObject.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.04f, 0.20f);
+        rect.anchorMax = new Vector2(0.96f, 0.82f);
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+
+        Image image = swipeObject.GetComponent<Image>();
+        image.color = new Color(1f, 1f, 1f, 0.01f);
+        image.raycastTarget = true;
+
+        SwipeBattingInput swipeInput = swipeObject.GetComponent<SwipeBattingInput>();
+        SetObjectReference(swipeInput, "shotSelection", shots);
     }
 
     private static void CreateButton(Transform parent, string label, Vector2 anchor, UnityEngine.Events.UnityAction action)
