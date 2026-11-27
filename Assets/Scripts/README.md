@@ -60,6 +60,10 @@ A milestone is complete only after its scene and assets are integrated in Unity,
 - Add `CricketMatchPauseController` to a scene object, assign an optional pause panel, and connect Pause/Resume buttons to its public methods.
 - `MobileCricketControls` exposes methods for each shot, bowling variation, and running action. Assign the relevant scene components in the Inspector before wiring UI buttons.
 
+## Match pause control
+
+The generated prototype HUD includes a `PAUSE / RESUME` button in the upper-right corner. It uses `CricketMatchPauseController` to pause gameplay with `Time.timeScale` and resume it. The button remains available while the game is paused. This is a simple prototype toggle; a polished pause menu, settings screen and confirmation flow are still future work.
+
 ## Scoreboard improvements
 - Displays the current run rate (CRR) using completed legal balls.
 - During a chase, displays the target, runs still required, and required run rate (RRR).
