@@ -23,7 +23,7 @@ public class RunningBetweenWicketsController : MonoBehaviour
     public bool IsRunning => isRunning;
     public int QueuedRuns => queuedRuns;
     public bool IsStrikerOutOfCrease => strikerBatter != null && strikerCrease != null &&
-        Vector3.Distance(strikerBatter.position, strikerCrease.position) > 0.65f;
+        Vector3.Distance(strikerBatter.position, strikerCrease.position) > 1.0f;
 
     // Connect this method to a mobile UI Run button.
     public void RequestRun()
