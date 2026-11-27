@@ -28,6 +28,35 @@ public class ShotSelectionController : MonoBehaviour
         ApplyAim();
     }
 
+    /// <summary>
+    /// Maps a screen swipe to a shot type, aim direction and loft, then plays it.
+    /// Swipe up adds loft; swipe down favours a grounded defensive shot.
+    /// Horizontal movement aims the shot across the field.
+    /// </summary>
+    public void PlaySwipeShot(Vector2 swipe)
+    {
+        float horizontal = Mathf.Clamp(swipe.x, -1f, 1f);
+        float vertical = Mathf.Clamp(swipe.y, -1f, 1f);
+
+        if (vertical > 0.55f)
+            Select(ShotType.Lofted);
+        else if (vertical < -0.55f)
+            Select(ShotType.Defensive);
+        else if (horizontal > 0.45f)
+            Select(ShotType.Pull);
+        else if (horizontal < -0.45f)
+            Select(ShotType.Cut);
+        else
+            Select(ShotType.Drive);
+
+        aimAngle = horizontal * 70f;
+        loftAngle = Mathf.Clamp(Mathf.Lerp(3f, 42f, (vertical + 1f) * 0.5f), 2f, 42f);
+        ApplyAim();
+
+        if (battingController != null)
+            battingController.Swing();
+    }
+
     public void PlaySelectedShot()
     {
         ApplyAim();
