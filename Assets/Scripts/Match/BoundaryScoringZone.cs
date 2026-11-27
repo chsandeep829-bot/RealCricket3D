@@ -21,6 +21,7 @@ public class BoundaryScoringZone : MonoBehaviour
         if (scoreOnlyOncePerBall && lastScoredBall == ball) return;
 
         lastScoredBall = ball;
-        matchManager.AddRuns(boundaryRuns);
+        if (!ball.MarkDeliveryResolved()) return;
+        matchManager.RecordBoundaryDelivery(boundaryRuns);
     }
 }
