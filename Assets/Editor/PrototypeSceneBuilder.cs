@@ -288,6 +288,11 @@ public static class PrototypeSceneBuilder
             new Vector3(0f, 0.02f, 0f), new Vector3(0.48f, 0.43f, 0.30f), kit);
         Transform head = CreateAvatarPart(player.transform, "Head", PrimitiveType.Sphere,
             new Vector3(0f, 0.82f, 0f), new Vector3(0.24f, 0.27f, 0.24f), skin);
+        CreateAvatarPart(player.transform, "Helmet", PrimitiveType.Sphere,
+            new Vector3(0f, 0.98f, -0.015f), new Vector3(0.29f, 0.19f, 0.29f), kit);
+        CreateAvatarPart(player.transform, "HelmetKitTrim", PrimitiveType.Cube,
+            new Vector3(0f, 0.91f, 0.245f), new Vector3(0.34f, 0.035f, 0.035f),
+            MakeMaterial(name + "AccentMaterial", new Color(0.95f, 0.68f, 0.12f)));
         Transform leftArm = CreateAvatarLimb(player.transform, "LeftArm",
             new Vector3(-0.34f, 0.28f, 0f), kit);
         Transform rightArm = CreateAvatarLimb(player.transform, "RightArm",
@@ -299,6 +304,8 @@ public static class PrototypeSceneBuilder
 
         ProceduralCricketPlayerMotion motion = player.AddComponent<ProceduralCricketPlayerMotion>();
         motion.Configure(torso, head, leftArm, rightArm, leftLeg, rightLeg);
+        CricketPlayerKit playerKit = player.AddComponent<CricketPlayerKit>();
+        playerKit.ApplyTeamColors(color, new Color(0.95f, 0.68f, 0.12f));
         return player;
     }
 
