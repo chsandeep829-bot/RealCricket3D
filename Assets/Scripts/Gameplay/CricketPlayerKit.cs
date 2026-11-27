@@ -30,8 +30,11 @@ public class CricketPlayerKit : MonoBehaviour
             if (item == null) continue;
             string partName = item.gameObject.name.ToLowerInvariant();
             bool useAccent = partName.Contains("helmet") || partName.Contains("kittrim");
-            Color selected = useAccent ? accentColor : primaryColor;
+            bool usePrimary = partName == "torso" ||
+                partName.Contains("leftarmmesh") || partName.Contains("rightarmmesh");
+            if (!useAccent && !usePrimary) continue;
 
+            Color selected = useAccent ? accentColor : primaryColor;
             item.GetPropertyBlock(propertyBlock);
             propertyBlock.SetColor(BaseColorId, selected);
             propertyBlock.SetColor(ColorId, selected);
