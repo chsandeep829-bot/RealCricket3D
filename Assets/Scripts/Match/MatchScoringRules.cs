@@ -9,8 +9,7 @@ public class MatchScoringRules : MonoBehaviour
     public void LegalDelivery(int batterRuns = 0)
     {
         if (matchManager == null) return;
-        if (batterRuns > 0) matchManager.AddRuns(batterRuns);
-        matchManager.RecordLegalDelivery();
+        matchManager.RecordLegalDelivery(Mathf.Max(0, batterRuns));
     }
 
     public void Wide(int additionalRuns = 0)
@@ -36,15 +35,12 @@ public class MatchScoringRules : MonoBehaviour
     public void LegBye(int runs)
     {
         if (matchManager == null) return;
-        matchManager.AddRuns(Mathf.Max(0, runs));
-        matchManager.RecordLegalDelivery();
+        matchManager.RecordLegBye(Mathf.Max(0, runs));
     }
 
     public void WicketOnLegalDelivery()
     {
         if (matchManager == null) return;
-        // Count the delivery before the wicket so the final wicket still records the ball.
-        matchManager.RecordLegalDelivery();
-        matchManager.RecordWicket();
+        matchManager.RecordWicketOnLegalDelivery();
     }
 }
