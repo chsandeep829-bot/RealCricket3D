@@ -25,6 +25,7 @@ public static class RealCricketAndroidBuild
         ConfigureBrandIdentity();
 
         PrototypeSceneBuilder.BuildPrototypeSceneForBuild();
+        ValidateGeneratedGameplayScene();
         Directory.CreateDirectory(OutputDirectory);
 
         PlayerSettings.productName = "CRICNOVA 3D";
@@ -57,6 +58,27 @@ public static class RealCricketAndroidBuild
             throw new System.Exception("CRICNOVA APK was not generated or is unexpectedly small.");
 
         Debug.Log("CRICNOVA 3D signed APK created: " + Path.GetFullPath(OutputPath));
+    }
+
+    private static void ValidateGeneratedGameplayScene()
+    {
+        RequireSceneComponent<MatchManager>("match scoring manager");
+        RequireSceneComponent<BattingController>("batter controller");
+        RequireSceneComponent<BatCollisionRelay>("bat collision relay");
+        RequireSceneComponent<BowlingVariationController>("bowling controls");
+        RequireSceneComponent<CricketBallDeliveryResolver>("ball delivery resolver");
+        RequireSceneComponent<CricketMatchSetupController>("match setup and toss");
+        RequireSceneComponent<RunningBetweenWicketsController>("running between wickets");
+        RequireSceneComponent<FielderTeamController>("fielding team");
+        RequireSceneComponent<Canvas>("mobile HUD canvas");
+        RequireSceneComponent<UnityEngine.EventSystems.EventSystem>("mobile UI event system");
+        Debug.Log("CRICNOVA gameplay scene validation passed.");
+    }
+
+    private static void RequireSceneComponent<T>(string description) where T : Component
+    {
+        if (Object.FindAnyObjectByType<T>() == null)
+            throw new System.Exception("Generated CRICNOVA scene is missing " + description + ".");
     }
 
     private static void ConfigureBrandIdentity()
