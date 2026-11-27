@@ -18,11 +18,14 @@ Unity project structure, an Editor greybox scene generator, first-pass batting/b
 - [x] Innings transitions, target chase and basic match result.
 - [x] Odd-run strike rotation and end changes after six legal balls.
 - [x] Manual running-between-wickets controller with queued one/two-run requests.
-- [ ] Connect running controls and batter crease markers in the generated scene.
+- [x] Generate two batter placeholders, crease markers and one/two-run controls in the prototype scene.
+- [x] Generate basic catch zones, a non-striker run-out zone and a keeper stumping zone.
+- [ ] Play-test and tune all trigger zones and running physics in Unity.
 - [ ] Add and tune catch trigger volumes and run-out wicket zones in the generated scene.
 - [x] Basic caught dismissal trigger for a descending airborne hit ball.
 - [x] Basic run-out trigger while batters are actively running.
-- [ ] Stumping, keeper catches, throw animations and overthrow rules.
+- [x] Basic keeper stumping trigger for an unhit ball reaching the keeper while striker is outside the crease tolerance.
+- [ ] Keeper catches, throw animations and overthrow rules.
 - [ ] Better wicket/no-ball/wide detection and dismissal validation.
 - [ ] Test declarations, follow-on and day/session rules.
 
