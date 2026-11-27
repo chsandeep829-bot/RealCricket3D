@@ -278,7 +278,7 @@ public static class PrototypeSceneBuilder
         scoreRect.offsetMin = Vector2.zero;
         scoreRect.offsetMax = Vector2.zero;
         Text scoreText = scoreObject.GetComponent<Text>();
-        scoreText.fontSize = 34f;
+        scoreText.fontSize = 34;
         scoreText.color = Color.white;
         scoreText.text = "0/0  0.0";
         SetObjectReference(match, "scoreText", scoreText);
@@ -451,7 +451,7 @@ public static class PrototypeSceneBuilder
         Text text = textObject.GetComponent<Text>();
         text.text = label;
         text.alignment = TextAnchor.MiddleCenter;
-        text.fontSize = 28f;
+        text.fontSize = 28;
         text.color = Color.white;
     }
 
