@@ -58,6 +58,9 @@ public class MobileCricketControls : MonoBehaviour
     public void OnCutShot() { if (shotSelection != null) shotSelection.SelectCut(); }
     public void OnSweepShot() { if (shotSelection != null) shotSelection.SelectSweep(); }
     public void OnLoftedShot() { if (shotSelection != null) shotSelection.SelectLofted(); }
+    public void OnStrokeShot() { if (shotSelection != null) shotSelection.SelectStroke(); }
+    public void OnPushShot() { if (shotSelection != null) shotSelection.SelectPush(); }
+    public void OnLeaveBall() { if (shotSelection != null) shotSelection.SelectLeave(); }
 
     public void OnRunPressed()
     {
