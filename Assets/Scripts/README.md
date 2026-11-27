@@ -12,6 +12,7 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 - `Fielding/StumpingWicketZone.cs`: records a stumping when an unhit delivery reaches the keeper zone while the striker is outside the configured crease tolerance.
 - `Fielding/FielderCatchZone.cs`: detects a descending airborne hit ball inside a fielder catch volume and records a caught dismissal once.
 - `Fielding/RunOutWicketZone.cs`: detects a hit ball reaching a wicket zone while batters are running, cancels queued runs and records a run-out.
+- `Fielding/StumpingWicketZone.cs`: records a stumping when an unhit delivery reaches the keeper zone while the striker is outside the configured crease tolerance.
 - `Bowling/BowlingController.cs`: creates and releases a delivery.
 - `Batting/BattingController.cs`: swing action and ball contact.
 - `Match/MatchManager.cs`: T20, ODI and simplified four-innings Test match flow, score tracking, innings transitions, chase targets and results.
@@ -26,13 +27,13 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 - ODI: 50 overs per innings.
 - Test prototype: four innings, with a configurable 90-over cap per innings so a local test match can reach a result in a prototype session.
 
-The format and team names can be changed on the MatchManager component in the Unity Inspector. The Test implementation is a simplified local rules model; declarations, follow-ons, session/day limits and full Test-specific rules are not implemented yet.
+The format and team names can be changed on the MatchManager component in the Unity Inspector. The scoreboard uses Unity's built-in UI Text component, so TextMeshPro is not required. The Test implementation is a simplified local rules model; declarations, follow-ons, session/day limits and full Test-specific rules are not implemented yet.
 
 ## Scene setup
 1. Open this repository as a Unity project.
 2. Let Unity finish importing and compiling scripts.
 3. Use **RealCricket3D → Build Prototype Scene** from the Unity Editor menu.
-4. Open `Assets/Scenes/CricketPrototype.unity` and press Play. The updated builder also creates two batters, running controls, fast/spin bowling controls, basic catch volumes, a run-out zone and a keeper stumping zone.
+4. Open `Assets/Scenes/CricketPrototype.unity` and press Play. The scene generator creates placeholder batters, a bowler, configured fast/spin deliveries, run controls, basic catch zones, a run-out zone and a keeper stumping zone. The updated builder also creates two batters, running controls, fast/spin bowling controls, basic catch volumes, a run-out zone and a keeper stumping zone.
 5. Assign the generated scene's score text and gameplay references if the builder reports any missing references.
 6. To enable running, add `RunningBetweenWicketsController` to a scene object; assign both batter transforms, the two crease marker transforms and `MatchManager`. Connect mobile Run buttons to `RequestRun` or `RequestTwoRuns`. Set `runSpeed` to tune movement.
 7. For catches, add a trigger collider and `FielderCatchZone` to each fielder's catch area. Assign `MatchManager` and tune the minimum/maximum catch heights. The ball must be hit and descending.
