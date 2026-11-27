@@ -373,94 +373,149 @@ public static class PrototypeSceneBuilder
         CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 0.5f;
+
+        GameObject controlsRoot = new GameObject("GameplayControls", typeof(RectTransform));
+        controlsRoot.transform.SetParent(canvas.transform, false);
+        RectTransform controlsRect = controlsRoot.GetComponent<RectTransform>();
+        controlsRect.anchorMin = Vector2.zero;
+        controlsRect.anchorMax = Vector2.one;
+        controlsRect.offsetMin = Vector2.zero;
+        controlsRect.offsetMax = Vector2.zero;
+        controlsRoot.SetActive(false);
 
         GameObject scoreObject = new GameObject("Score", typeof(RectTransform), typeof(Text));
-        scoreObject.transform.SetParent(canvas.transform, false);
+        scoreObject.transform.SetParent(controlsRoot.transform, false);
         RectTransform scoreRect = scoreObject.GetComponent<RectTransform>();
-        scoreRect.anchorMin = new Vector2(0.02f, 0.88f);
-        scoreRect.anchorMax = new Vector2(0.35f, 0.99f);
-        scoreRect.offsetMin = Vector2.zero;
+        scoreRect.anchorMin = new Vector2(0.02f, 0.86f);
+        scoreRect.anchorMax = new Vector2(0.42f, 0.99f);
+        scoreRect.offsetMin = new Vector2(8f, 0f);
         scoreRect.offsetMax = Vector2.zero;
         Text scoreText = scoreObject.GetComponent<Text>();
-        scoreText.fontSize = 34;
+        scoreText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        scoreText.fontSize = 30;
+        scoreText.fontStyle = FontStyle.Bold;
+        scoreText.alignment = TextAnchor.UpperLeft;
         scoreText.color = Color.white;
-        scoreText.text = "0/0  0.0";
+        scoreText.text = "TEAM A  0/0";
         SetObjectReference(match, "scoreText", scoreText);
 
-        CreateSwipeArea(canvas.transform, shots);
+        CreateSwipeArea(controlsRoot.transform, shots);
 
-        CreateButton(canvas.transform, "FAST", new Vector2(0.92f, 0.08f), variations.BowlFast);
-        CreateButton(canvas.transform, "SPIN", new Vector2(0.80f, 0.08f), variations.BowlOffSpin);
-        CreateButton(canvas.transform, "SHOT", new Vector2(0.68f, 0.08f), shots.PlaySelectedShot);
-        CreateButton(canvas.transform, "RUN", new Vector2(0.56f, 0.08f), running.RequestRun);
-        CreateButton(canvas.transform, "2 RUN", new Vector2(0.44f, 0.08f), running.RequestTwoRuns);
-        CreateButton(canvas.transform, "DRIVE", new Vector2(0.32f, 0.08f), shots.SelectDrive);
-        CreateButton(canvas.transform, "PULL", new Vector2(0.20f, 0.08f), shots.SelectPull);
-        CreateButton(canvas.transform, "LOFT", new Vector2(0.18f, 0.18f), shots.SelectLofted);
-        CreateButton(canvas.transform, "STROKE", new Vector2(0.40f, 0.18f), shots.SelectStroke);
-        CreateButton(canvas.transform, "PUSH", new Vector2(0.62f, 0.18f), shots.SelectPush);
-        CreateButton(canvas.transform, "LEAVE", new Vector2(0.84f, 0.18f), shots.SelectLeave);
-        CreateButton(canvas.transform, "PAUSE / RESUME",
+        CreateButton(controlsRoot.transform, "FAST", new Vector2(0.92f, 0.08f), variations.BowlFast);
+        CreateButton(controlsRoot.transform, "SPIN", new Vector2(0.80f, 0.08f), variations.BowlOffSpin);
+        CreateButton(controlsRoot.transform, "SHOT", new Vector2(0.68f, 0.08f), shots.PlaySelectedShot);
+        CreateButton(controlsRoot.transform, "RUN", new Vector2(0.56f, 0.08f), running.RequestRun);
+        CreateButton(controlsRoot.transform, "2 RUN", new Vector2(0.44f, 0.08f), running.RequestTwoRuns);
+        CreateButton(controlsRoot.transform, "DRIVE", new Vector2(0.32f, 0.08f), shots.SelectDrive);
+        CreateButton(controlsRoot.transform, "PULL", new Vector2(0.20f, 0.08f), shots.SelectPull);
+        CreateButton(controlsRoot.transform, "LOFT", new Vector2(0.18f, 0.18f), shots.SelectLofted);
+        CreateButton(controlsRoot.transform, "STROKE", new Vector2(0.40f, 0.18f), shots.SelectStroke);
+        CreateButton(controlsRoot.transform, "PUSH", new Vector2(0.62f, 0.18f), shots.SelectPush);
+        CreateButton(controlsRoot.transform, "LEAVE", new Vector2(0.84f, 0.18f), shots.SelectLeave);
+        CreateButton(controlsRoot.transform, "PAUSE / RESUME",
             new Vector2(0.94f, 0.93f), pauseController.TogglePause);
-        CreateMatchSetupMenu(canvas.transform, matchSetup);
+
+        CreateMatchSetupMenu(canvas.transform, matchSetup, controlsRoot);
         CreatePostMatchMenu(canvas.transform, postMatch);
     }
 
-
-    private static void CreateMatchSetupMenu(Transform canvas, CricketMatchSetupController setup)
+    private static void CreateMatchSetupMenu(Transform canvas, CricketMatchSetupController setup,
+        GameObject controlsRoot)
     {
-        GameObject panel = new GameObject("MatchSetupMenu",
+        // A full-screen modal prevents the gameplay HUD from showing or receiving
+        // touches behind the setup menu while the player chooses a match.
+        GameObject overlay = new GameObject("MatchSetupMenu",
             typeof(RectTransform), typeof(Image));
-        panel.transform.SetParent(canvas, false);
-        RectTransform panelRect = panel.GetComponent<RectTransform>();
-        panelRect.anchorMin = new Vector2(0.16f, 0.12f);
-        panelRect.anchorMax = new Vector2(0.84f, 0.88f);
-        panelRect.offsetMin = Vector2.zero;
-        panelRect.offsetMax = Vector2.zero;
-        panel.GetComponent<Image>().color = new Color(0.025f, 0.055f, 0.10f, 0.97f);
+        overlay.transform.SetParent(canvas, false);
+        RectTransform overlayRect = overlay.GetComponent<RectTransform>();
+        overlayRect.anchorMin = Vector2.zero;
+        overlayRect.anchorMax = Vector2.one;
+        overlayRect.offsetMin = Vector2.zero;
+        overlayRect.offsetMax = Vector2.zero;
+        Image overlayImage = overlay.GetComponent<Image>();
+        overlayImage.color = new Color(0.008f, 0.018f, 0.035f, 0.94f);
+        overlayImage.raycastTarget = true;
 
-        CreateMenuText(panel.transform, "REALCRICKET3D  |  MATCH SETUP",
-            new Vector2(0.5f, 0.88f), new Vector2(780f, 70f), 38);
+        GameObject card = new GameObject("SetupCard", typeof(RectTransform), typeof(Image));
+        card.transform.SetParent(overlay.transform, false);
+        RectTransform cardRect = card.GetComponent<RectTransform>();
+        cardRect.anchorMin = new Vector2(0.07f, 0.07f);
+        cardRect.anchorMax = new Vector2(0.93f, 0.93f);
+        cardRect.offsetMin = Vector2.zero;
+        cardRect.offsetMax = Vector2.zero;
+        card.GetComponent<Image>().color = new Color(0.018f, 0.045f, 0.078f, 1f);
 
-        Text status = CreateMenuText(panel.transform, "INDIA vs AUSTRALIA",
-            new Vector2(0.5f, 0.70f), new Vector2(780f, 60f), 30);
+        GameObject goldRule = new GameObject("GoldTopRule", typeof(RectTransform), typeof(Image));
+        goldRule.transform.SetParent(card.transform, false);
+        RectTransform ruleRect = goldRule.GetComponent<RectTransform>();
+        ruleRect.anchorMin = new Vector2(0f, 0.992f);
+        ruleRect.anchorMax = new Vector2(1f, 1f);
+        ruleRect.offsetMin = Vector2.zero;
+        ruleRect.offsetMax = Vector2.zero;
+        goldRule.GetComponent<Image>().color = new Color(0.86f, 0.62f, 0.18f, 1f);
+
+        CreateMenuText(card.transform, "REAL CRICKET 3D  |  MATCH SETUP",
+            new Vector2(0.5f, 0.88f), new Vector2(1100f, 74f), 38);
+
+        Text status = CreateMenuText(card.transform, "INDIA vs AUSTRALIA  •  T20",
+            new Vector2(0.5f, 0.75f), new Vector2(1100f, 62f), 28);
+        status.color = new Color(1f, 0.78f, 0.28f, 1f);
         SetObjectReference(setup, "setupStatus", status);
 
-        CreateButton(panel.transform, "CHANGE TEAM A",
-            new Vector2(0.27f, 0.58f), setup.SelectNextFirstTeam);
-        CreateButton(panel.transform, "CHANGE TEAM B",
-            new Vector2(0.73f, 0.58f), setup.SelectNextSecondTeam);
+        CreateMenuText(card.transform, "SELECT TEAMS",
+            new Vector2(0.5f, 0.65f), new Vector2(500f, 34f), 19);
+        CreateButton(card.transform, "CHANGE TEAM A",
+            new Vector2(0.25f, 0.56f), setup.SelectNextFirstTeam,
+            new Vector2(330f, 76f), new Color(0.045f, 0.13f, 0.22f, 1f), 22);
+        CreateButton(card.transform, "CHANGE TEAM B",
+            new Vector2(0.75f, 0.56f), setup.SelectNextSecondTeam,
+            new Vector2(330f, 76f), new Color(0.045f, 0.13f, 0.22f, 1f), 22);
 
-        CreateButton(panel.transform, "T20",
-            new Vector2(0.25f, 0.40f), setup.SelectT20);
-        CreateButton(panel.transform, "ODI",
-            new Vector2(0.50f, 0.40f), setup.SelectODI);
-        CreateButton(panel.transform, "TEST",
-            new Vector2(0.75f, 0.40f), setup.SelectTest);
+        CreateMenuText(card.transform, "MATCH FORMAT",
+            new Vector2(0.5f, 0.43f), new Vector2(500f, 34f), 19);
+        CreateButton(card.transform, "T20",
+            new Vector2(0.25f, 0.35f), setup.SelectT20,
+            new Vector2(230f, 68f), new Color(0.12f, 0.16f, 0.23f, 1f), 23);
+        CreateButton(card.transform, "ODI",
+            new Vector2(0.50f, 0.35f), setup.SelectODI,
+            new Vector2(230f, 68f), new Color(0.12f, 0.16f, 0.23f, 1f), 23);
+        CreateButton(card.transform, "TEST",
+            new Vector2(0.75f, 0.35f), setup.SelectTest,
+            new Vector2(230f, 68f), new Color(0.12f, 0.16f, 0.23f, 1f), 23);
 
-        CreateButton(panel.transform, "TOSS",
-            new Vector2(0.50f, 0.23f), setup.PerformToss);
-        CreateButton(panel.transform, "START 4-TEAM CUP",
-            new Vector2(0.50f, 0.31f), () =>
+        CreateButton(card.transform, "TOSS",
+            new Vector2(0.50f, 0.22f), setup.PerformToss,
+            new Vector2(280f, 70f), new Color(0.72f, 0.48f, 0.10f, 1f), 24);
+        CreateButton(card.transform, "START 4-TEAM CUP",
+            new Vector2(0.50f, 0.115f), () =>
             {
+                if (!setup.CanStartTournament) return;
                 setup.CreateFourTeamTournamentAndStart();
-                panel.SetActive(false);
-            });
+                overlay.SetActive(false);
+                controlsRoot.SetActive(true);
+            },
+            new Vector2(390f, 66f), new Color(0.08f, 0.28f, 0.25f, 1f), 21);
 
-        CreateButton(panel.transform, "WINNER BAT",
-            new Vector2(0.30f, 0.08f), () =>
+        CreateButton(card.transform, "WINNER BAT",
+            new Vector2(0.28f, 0.045f), () =>
             {
-                if (!setup.IsTossReady) return;
+                if (!setup.IsTossReady || !setup.CanStartMatch) return;
                 setup.TossWinnerChooseBat();
-                panel.SetActive(false);
-            });
-        CreateButton(panel.transform, "WINNER BOWL",
-            new Vector2(0.70f, 0.08f), () =>
+                overlay.SetActive(false);
+                controlsRoot.SetActive(true);
+            },
+            new Vector2(300f, 62f), new Color(0.08f, 0.28f, 0.20f, 1f), 21);
+        CreateButton(card.transform, "WINNER BOWL",
+            new Vector2(0.72f, 0.045f), () =>
             {
-                if (!setup.IsTossReady) return;
+                if (!setup.IsTossReady || !setup.CanStartMatch) return;
                 setup.TossWinnerChooseBowl();
-                panel.SetActive(false);
-            });
+                overlay.SetActive(false);
+                controlsRoot.SetActive(true);
+            },
+            new Vector2(300f, 62f), new Color(0.12f, 0.20f, 0.34f, 1f), 21);
     }
 
     private static Text CreateMenuText(Transform parent, string value, Vector2 anchor,
@@ -479,9 +534,9 @@ public static class PrototypeSceneBuilder
         text.fontSize = fontSize;
         text.color = Color.white;
         text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        text.raycastTarget = false;
         return text;
     }
-
 
     private static void CreatePostMatchMenu(Transform canvas, CricketPostMatchMenuController controller)
     {
@@ -532,17 +587,25 @@ public static class PrototypeSceneBuilder
 
     private static void CreateButton(Transform parent, string label, Vector2 anchor, UnityEngine.Events.UnityAction action)
     {
+        CreateButton(parent, label, anchor, action, new Vector2(180f, 76f),
+            new Color(0.045f, 0.13f, 0.22f, 0.96f), 24);
+    }
+
+    private static void CreateButton(Transform parent, string label, Vector2 anchor,
+        UnityEngine.Events.UnityAction action, Vector2 size, Color buttonColor, int fontSize)
+    {
         GameObject buttonObject = new GameObject(label + "Button", typeof(RectTransform), typeof(Image), typeof(Button));
         buttonObject.transform.SetParent(parent, false);
         RectTransform rect = buttonObject.GetComponent<RectTransform>();
         rect.anchorMin = anchor;
         rect.anchorMax = anchor;
-        rect.sizeDelta = new Vector2(180f, 76f);
+        rect.sizeDelta = size;
         rect.anchoredPosition = Vector2.zero;
 
         Image image = buttonObject.GetComponent<Image>();
-        image.color = new Color(0.08f, 0.16f, 0.28f, 0.92f);
+        image.color = buttonColor;
         Button button = buttonObject.GetComponent<Button>();
+        button.targetGraphic = image;
         button.onClick.AddListener(action);
 
         GameObject textObject = new GameObject("Label", typeof(RectTransform), typeof(Text));
@@ -550,13 +613,19 @@ public static class PrototypeSceneBuilder
         RectTransform textRect = textObject.GetComponent<RectTransform>();
         textRect.anchorMin = Vector2.zero;
         textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = Vector2.zero;
-        textRect.offsetMax = Vector2.zero;
+        textRect.offsetMin = new Vector2(8f, 4f);
+        textRect.offsetMax = new Vector2(-8f, -4f);
         Text text = textObject.GetComponent<Text>();
         text.text = label;
         text.alignment = TextAnchor.MiddleCenter;
-        text.fontSize = 28;
+        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        text.fontSize = fontSize;
+        text.fontStyle = FontStyle.Bold;
         text.color = Color.white;
+        text.resizeTextForBestFit = true;
+        text.resizeTextMinSize = 14;
+        text.resizeTextMaxSize = fontSize;
+        text.raycastTarget = false;
     }
 
     private static void CreateRunOutZone(Vector3 position, MatchManager match,
