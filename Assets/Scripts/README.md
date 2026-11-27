@@ -2,77 +2,45 @@
 
 This folder contains the Unity gameplay foundation for RealCricket3D.
 
-## Current systems
+## Systems added across stages 1–5
+
+- **Batting timing:** `Batting/BattingController.cs` scores contact timing against a configurable sweet-spot point in the swing. It applies a quality-based hit-power multiplier and can display optional PERFECT / GOOD / MISTIMED feedback. This is a first-pass swing-time model; ball-flight prediction and per-delivery timing calibration still need playtesting.
+- **Bowling control:** `Bowling/BowlingVariationController.cs` supports delivery profiles plus adjustable line and length. Connect a UI Slider to `MobileCricketControls.OnBowlingLineChanged` and another to `OnBowlingLengthChanged`.
+- **Broadcast cameras:** `Gameplay/CricketBroadcastDirector.cs` switches between assigned camera rigs and can enable a ball-follow camera. Assign camera references in the Inspector; the class does not create camera rigs or cinematic replay footage.
+- **Team selection and toss:** `Match/CricketMatchSetupController.cs` exposes team and format selection, a random toss, bat/bowl decisions, and match start. Connect menu controls to its public methods and assign a MatchManager.
+- **Career saves:** `Match/CricketCareerSaveSystem.cs` stores a local player profile and basic match statistics in PlayerPrefs. This is device-local persistence, not cloud sync.
+- **Tournament bracket:** `Match/CricketTournamentManager.cs` manages a four-team knockout bracket and stores progress locally. Call `CreateTournament`, then `RecordCurrentMatchWinner` after each completed match.
 - `Gameplay/CricketBall.cs`: Rigidbody-based ball state and velocity.
 - `Gameplay/CricketCameraFollow.cs`: smooth camera follow for a selected player.
-- `Gameplay/RunningBetweenWicketsController.cs`: queues one/two-run requests, animates the two batter transforms between crease markers and awards runs only after each completed crossing.
-- `Gameplay/CricketPlayerAnimator.cs`: sends movement and action parameters/triggers to an assigned Animator Controller; actual animation clips and rig mappings must be supplied separately.
-- `Gameplay/CricketMatchPauseController.cs`: pauses and resumes match time and toggles an optional pause panel.
-- `Fielding/FielderThrowController.cs`: detects a hit ball at a fielder pickup trigger and throws it toward an assigned target; it can be restricted to active running plays.
-- `Fielding/FielderTeamController.cs`: assigns each newly hit ball to the nearest available fielder, with periodic scanning and optional automatic scene discovery.
-- `Fielding/StumpingWicketZone.cs`: records a stumping when an unhit delivery reaches the keeper zone while the striker is outside the configured crease tolerance.
-- `Fielding/FielderCatchZone.cs`: detects a descending airborne hit ball inside a fielder catch volume and records a caught dismissal once.
-- `Fielding/RunOutWicketZone.cs`: detects a hit ball reaching a wicket zone while batters are running, cancels queued runs and records a run-out.
-- `Fielding/StumpingWicketZone.cs`: records a stumping when an unhit delivery reaches the keeper zone while the striker is outside the configured crease tolerance.
-- `Bowling/BowlingController.cs`: creates and releases a delivery.
-- `Batting/BattingController.cs`: swing action and ball contact.
+- `Gameplay/RunningBetweenWicketsController.cs`: queues one/two-run requests and animates batters between crease markers.
+- `Gameplay/CricketPlayerAnimator.cs`: sends movement and action parameters/triggers to an assigned Animator Controller; actual animation clips and controller must be supplied separately.
+- `Gameplay/CricketMatchPauseController.cs`: pauses and resumes match time.
+- Fielding scripts provide basic fielder chase, catch, throw, run-out and stumping prototypes.
+- `Bowling/BowlingController.cs`: creates and releases a basic delivery.
+- `Batting/ShotSelectionController.cs`: separate shot selection and swipe aiming.
 - `Match/MatchManager.cs`: T20, ODI and simplified four-innings Test match flow, score tracking, innings transitions, chase targets and results.
 - `Match/MatchScoringRules.cs`: legal deliveries, wides, no-balls, byes, leg-byes and legal-ball wickets.
-- `Match/MatchManager.cs`: tracks odd-run strike rotation and end changes after six legal balls.
-- `Match/BoundaryScoringZone.cs`: awards configured boundary runs when a hit ball enters its trigger.
-- `Match/WicketTrigger.cs`: records a wicket when an unhit delivery enters the wicket trigger.
-- `UI/MobileCricketControls.cs`: exposes UI actions for shot selection, batting, pace/spin bowling variations and running.
-- `UI/SwipeBattingInput.cs`: reads drag gestures in the gameplay area and passes swipe direction to the shot selector.
+- `UI/MobileCricketControls.cs`: exposes UI actions for shot selection, bowling variations, bowling line/length and running.
+- `UI/SwipeBattingInput.cs`: reads drag gestures and passes swipe direction to the shot selector.
 
-## Match format defaults
+## Existing match format defaults
+
 - T20: 20 overs per innings.
 - ODI: 50 overs per innings.
-- Test prototype: four innings, with a configurable 90-over cap per innings so a local test match can reach a result in a prototype session.
+- Test prototype: four innings, with a configurable 90-over cap per innings. Declarations, follow-ons, sessions and full Test rules are not implemented.
 
-The format and team names can be changed on the MatchManager component in the Unity Inspector. The scoreboard uses Unity's built-in UI Text component, so TextMeshPro is not required. The Test implementation is a simplified local rules model; declarations, follow-ons, session/day limits and full Test-specific rules are not implemented yet.
+## Unity setup
 
-## Scene setup
-1. Open this repository as a Unity project.
-2. Let Unity finish importing and compiling scripts.
-3. Use **RealCricket3D → Build Prototype Scene** from the Unity Editor menu.
-4. Open `Assets/Scenes/CricketPrototype.unity` and press Play. The scene generator creates placeholder batters, a bowler, configured fast/spin deliveries, run controls, basic catch zones, a run-out zone and a keeper stumping zone. The updated builder also creates two batters, running controls, fast/spin bowling controls, basic catch volumes, a run-out zone and a keeper stumping zone.
-5. Assign the generated scene's score text and gameplay references if the builder reports any missing references.
-6. To enable running, add `RunningBetweenWicketsController` to a scene object; assign both batter transforms, the two crease marker transforms and `MatchManager`. Connect mobile Run buttons to `RequestRun` or `RequestTwoRuns`. Set `runSpeed` to tune movement.
-7. For catches, add a trigger collider and `FielderCatchZone` to each fielder's catch area. Assign `MatchManager` and tune the minimum/maximum catch heights. The ball must be hit and descending.
-8. For run-outs, add a trigger collider at the stumps and attach `RunOutWicketZone`. Assign `MatchManager` and the active `RunningBetweenWicketsController`. The ball must reach the wicket while a run is in progress.
+1. Open the repository as a Unity project and let Unity finish importing and compiling.
+2. Use **RealCricket3D → Build Prototype Scene** from the Unity Editor menu.
+3. Open `Assets/Scenes/CricketPrototype.unity` and press Play.
+4. Assign missing references in the Inspector. For timing feedback, assign a Unity UI Text to BattingController's optional Timing Feedback field.
+5. Add camera rigs and assign them to CricketBroadcastDirector. Use at least three camera entries for broadcast, bowler and batting views.
+6. Add CricketMatchSetupController to a menu object, assign MatchManager, and wire team selection, format, toss and start buttons.
+7. Add CricketCareerSaveSystem and CricketTournamentManager to a persistent scene object. Call their public methods from match-result and tournament screens.
 
-## Important prototype limitations
-This repository is still an early playable-prototype foundation, not a finished commercial cricket game. Player models are placeholders; animations, team selection, complete fielding animations, stumping, throw animations, innings presentation, audio, commentary, replay, save data, online multiplayer and Android performance testing remain to be built and tested.
+**Important:** the scene generator replaces the generated prototype scene. Save manual scene changes before running it again.
 
-A milestone is complete only after its scene and assets are integrated in Unity, builds successfully, and is tested in the Unity Editor and on target Android devices. Repository scripts alone do not constitute a finished game.
+## Limitations and verification
 
-## Automatic fielder chase setup
-
-1. Add an empty GameObject named `FieldingTeamManager` to the scene.
-2. Add the `FielderTeamController` component.
-3. Add `FielderAI` to each fielding player and tune movement speed and pickup distance.
-4. Leave `Discover Fielders On Start` enabled to find scene fielders automatically, or disable it and assign the team array manually.
-5. During play, the nearest available fielder will chase each newly hit ball. This prototype does not yet animate a pickup, return throw or relay automatically; those remain separate systems.
-
-## Additional scene wiring
-
-- Add `FielderThrowController` to a trigger collider around a fielder's pickup area. Assign the wicket target and, when required, the running controller. The wicket's `RunOutWicketZone` must be configured separately.
-- Add `CricketPlayerAnimator` to a rig with an Animator Controller. The controller must define the configured float and trigger parameters. This script does not create animation clips or a rig.
-- Add `CricketMatchPauseController` to a scene object, assign an optional pause panel, and connect Pause/Resume buttons to its public methods.
-- `MobileCricketControls` exposes methods for each shot, bowling variation, and running action. Assign the relevant scene components in the Inspector before wiring UI buttons.
-
-## Match pause control
-
-The generated prototype HUD includes a `PAUSE / RESUME` button in the upper-right corner. It uses `CricketMatchPauseController` to pause gameplay with `Time.timeScale` and resume it. The button remains available while the game is paused. This is a simple prototype toggle; a polished pause menu, settings screen and confirmation flow are still future work.
-
-## Scoreboard improvements
-- Displays the current run rate (CRR) using completed legal balls.
-- During a chase, displays the target, runs still required, and required run rate (RRR).
-- Uses actual newline characters so each scoreboard item appears on its own line.
-
-
-## Swipe batting controls
-
-The generated HUD keeps shot selection separate from swipe aiming. Select one of the dedicated Loft, Stroke, Push or Leave buttons, then swipe and release in the central gameplay area to aim and play the selected shot. A swipe does not silently change the selected shot type. Leave is a deliberate no-shot selection: the bat does not swing. Push uses a lower-power, low-loft profile; Stroke uses a normal straight profile; Loft uses a higher-loft profile. Short gestures below the configured pixel threshold are ignored.
-
-The swipe surface is created behind the HUD buttons, so the existing FAST, SPIN, SHOT, RUN and shot-selection buttons remain clickable. Gesture mapping is a prototype control scheme; timing, shot choice and direction still need tuning and playtesting in Unity on a touch device.
+The repository is still an early prototype foundation, not a finished commercial cricket game. Player models remain placeholders unless you add original/licensed rigs and animations. The timing model, bowling line/length tuning, camera cuts, menu wiring, tournament progression and career-stat callbacks need Unity Editor playtesting. No Unity compile, Android build or device test is claimed by these source changes. Stage 5 here means core code foundations for team/toss/career/tournament, not a finished menu or full career mode.
