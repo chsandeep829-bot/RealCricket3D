@@ -1,4 +1,4 @@
-name: Build RealCricket3D Signed Release APK
+name: Build CRICNOVA 3D Signed Release APK
 
 on:
   workflow_dispatch:
@@ -47,7 +47,7 @@ jobs:
       - name: Upload signed Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: RealCricket3D-release-apk
-          path: Builds/Android/RealCricket3D.apk
+          name: CRICNOVA-3D-release-apk
+          path: Builds/Android/CRICNOVA3D.apk
           if-no-files-found: error
           retention-days: 14
