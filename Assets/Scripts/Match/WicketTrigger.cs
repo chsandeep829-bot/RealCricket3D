@@ -15,9 +15,10 @@ public class WicketTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         CricketBall ball = other.GetComponentInParent<CricketBall>();
-        if (ball == null || ball.HasBeenHit || wicketRecorded || matchManager == null) return;
+        if (ball == null || ball.HasBeenHit || ball.DismissalRecorded || wicketRecorded || matchManager == null) return;
 
         wicketRecorded = true;
+        ball.MarkDismissal();
         matchManager.RecordWicketOnLegalDelivery();
         if (disableAfterWicket) enabled = false;
     }
