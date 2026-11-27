@@ -56,6 +56,7 @@ public static class PrototypeSceneBuilder
         CricketBall ballPrefab = CreateBallPrefab();
         GameObject matchObject = new GameObject("MatchManager");
         MatchManager match = matchObject.AddComponent<MatchManager>();
+        SetBoolValue(match, "startMatchOnPlay", false);
 
         // Keep the offline match setup, career profile and tournament save systems
         // in the generated scene so they can be wired to menus without manual creation.
@@ -122,7 +123,7 @@ public static class PrototypeSceneBuilder
             matchObject.AddComponent<CricketMatchPauseController>();
 
         CreateControls(bowling, variations, batting, shots, running, match,
-            pauseController);
+            pauseController, matchSetup);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene, ScenePath);
@@ -241,7 +242,7 @@ public static class PrototypeSceneBuilder
     private static void CreateControls(BowlingController bowling, BowlingVariationController variations,
         BattingController batting, ShotSelectionController shots,
         RunningBetweenWicketsController running, MatchManager match,
-        CricketMatchPauseController pauseController)
+        CricketMatchPauseController pauseController, CricketMatchSetupController matchSetup)
     {
         if (Object.FindObjectOfType<EventSystem>() == null)
         {
@@ -286,6 +287,77 @@ public static class PrototypeSceneBuilder
         CreateButton(canvas.transform, "LEAVE", new Vector2(0.84f, 0.18f), shots.SelectLeave);
         CreateButton(canvas.transform, "PAUSE / RESUME",
             new Vector2(0.94f, 0.93f), pauseController.TogglePause);
+        CreateMatchSetupMenu(canvas.transform, matchSetup);
+    }
+
+
+    private static void CreateMatchSetupMenu(Transform canvas, CricketMatchSetupController setup)
+    {
+        GameObject panel = new GameObject("MatchSetupMenu",
+            typeof(RectTransform), typeof(Image));
+        panel.transform.SetParent(canvas, false);
+        RectTransform panelRect = panel.GetComponent<RectTransform>();
+        panelRect.anchorMin = new Vector2(0.16f, 0.12f);
+        panelRect.anchorMax = new Vector2(0.84f, 0.88f);
+        panelRect.offsetMin = Vector2.zero;
+        panelRect.offsetMax = Vector2.zero;
+        panel.GetComponent<Image>().color = new Color(0.025f, 0.055f, 0.10f, 0.97f);
+
+        CreateMenuText(panel.transform, "REALCRICKET3D  |  MATCH SETUP",
+            new Vector2(0.5f, 0.88f), new Vector2(780f, 70f), 38);
+
+        Text status = CreateMenuText(panel.transform, "INDIA vs AUSTRALIA",
+            new Vector2(0.5f, 0.70f), new Vector2(780f, 60f), 30);
+        SetObjectReference(setup, "setupStatus", status);
+
+        CreateButton(panel.transform, "CHANGE TEAM A",
+            new Vector2(0.27f, 0.58f), setup.SelectNextFirstTeam);
+        CreateButton(panel.transform, "CHANGE TEAM B",
+            new Vector2(0.73f, 0.58f), setup.SelectNextSecondTeam);
+
+        CreateButton(panel.transform, "T20",
+            new Vector2(0.25f, 0.40f), setup.SelectT20);
+        CreateButton(panel.transform, "ODI",
+            new Vector2(0.50f, 0.40f), setup.SelectODI);
+        CreateButton(panel.transform, "TEST",
+            new Vector2(0.75f, 0.40f), setup.SelectTest);
+
+        CreateButton(panel.transform, "TOSS",
+            new Vector2(0.50f, 0.23f), setup.PerformToss);
+
+        CreateButton(panel.transform, "WINNER BAT",
+            new Vector2(0.30f, 0.08f), () =>
+            {
+                if (!setup.IsTossReady) return;
+                setup.TossWinnerChooseBat();
+                panel.SetActive(false);
+            });
+        CreateButton(panel.transform, "WINNER BOWL",
+            new Vector2(0.70f, 0.08f), () =>
+            {
+                if (!setup.IsTossReady) return;
+                setup.TossWinnerChooseBowl();
+                panel.SetActive(false);
+            });
+    }
+
+    private static Text CreateMenuText(Transform parent, string value, Vector2 anchor,
+        Vector2 size, int fontSize)
+    {
+        GameObject textObject = new GameObject("MenuText", typeof(RectTransform), typeof(Text));
+        textObject.transform.SetParent(parent, false);
+        RectTransform rect = textObject.GetComponent<RectTransform>();
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.sizeDelta = size;
+        rect.anchoredPosition = Vector2.zero;
+        Text text = textObject.GetComponent<Text>();
+        text.text = value;
+        text.alignment = TextAnchor.MiddleCenter;
+        text.fontSize = fontSize;
+        text.color = Color.white;
+        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        return text;
     }
 
     private static void CreateSwipeArea(Transform parent, ShotSelectionController shots)
@@ -453,6 +525,20 @@ public static class PrototypeSceneBuilder
         material.color = color;
         EditorUtility.SetDirty(material);
         return material;
+    }
+
+
+    private static void SetBoolValue(Object target, string propertyName, bool value)
+    {
+        SerializedObject serialized = new SerializedObject(target);
+        SerializedProperty property = serialized.FindProperty(propertyName);
+        if (property == null)
+        {
+            Debug.LogWarning("Serialized bool not found: " + propertyName + " on " + target.name);
+            return;
+        }
+        property.boolValue = value;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static void SetFloatValue(Object target, string propertyName, float value)
