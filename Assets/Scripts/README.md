@@ -8,7 +8,7 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 - `Gameplay/RunningBetweenWicketsController.cs`: queues one/two-run requests, animates the two batter transforms between crease markers and awards runs only after each completed crossing.
 - `Gameplay/CricketPlayerAnimator.cs`: sends movement and action parameters/triggers to an assigned Animator Controller; actual animation clips and rig mappings must be supplied separately.
 - `Gameplay/CricketMatchPauseController.cs`: pauses and resumes match time and toggles an optional pause panel.
-- `Fielding/FielderThrowController.cs`: detects a hit ball at a fielder pickup trigger and throws it toward an assigned target; it can be restricted to active running plays.
+- `Fielding/FielderThrowController.cs`: detects a hit ball at a fielder pickup trigger and throws it toward an assigned target; it can be restricted to active running plays.\n- `Fielding/FielderTeamController.cs`: assigns each newly hit ball to the nearest available fielder, with periodic scanning and optional automatic scene discovery.
 - `Fielding/StumpingWicketZone.cs`: records a stumping when an unhit delivery reaches the keeper zone while the striker is outside the configured crease tolerance.
 - `Fielding/FielderCatchZone.cs`: detects a descending airborne hit ball inside a fielder catch volume and records a caught dismissal once.
 - `Fielding/RunOutWicketZone.cs`: detects a hit ball reaching a wicket zone while batters are running, cancels queued runs and records a run-out.
@@ -44,7 +44,7 @@ This repository is still an early playable-prototype foundation, not a finished 
 
 A milestone is complete only after its scene and assets are integrated in Unity, builds successfully, and is tested in the Unity Editor and on target Android devices. Repository scripts alone do not constitute a finished game.
 
-## Additional scene wiring
+## Automatic fielder chase setup\n\n1. Add an empty GameObject named `FieldingTeamManager` to the scene.\n2. Add the `FielderTeamController` component.\n3. Add `FielderAI` to each fielding player and tune movement speed and pickup distance.\n4. Leave `Discover Fielders On Start` enabled to find scene fielders automatically, or disable it and assign the team array manually.\n5. During play, the nearest available fielder will chase each newly hit ball. This prototype does not yet animate a pickup, return throw or relay automatically; those remain separate systems.\n\n## Additional scene wiring
 
 - Add `FielderThrowController` to a trigger collider around a fielder's pickup area. Assign the wicket target and, when required, the running controller. The wicket's `RunOutWicketZone` must be configured separately.
 - Add `CricketPlayerAnimator` to a rig with an Animator Controller. The controller must define the configured float and trigger parameters. This script does not create animation clips or a rig.
