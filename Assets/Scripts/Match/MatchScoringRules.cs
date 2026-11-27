@@ -30,8 +30,7 @@ public class MatchScoringRules : MonoBehaviour
     public void Bye(int runs)
     {
         if (matchManager == null) return;
-        matchManager.AddRuns(Mathf.Max(0, runs));
-        matchManager.RecordLegalDelivery();
+        matchManager.RecordBye(Mathf.Max(0, runs));
     }
 
     public void LegBye(int runs)
