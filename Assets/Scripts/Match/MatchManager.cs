@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
-using TMPro;
+using UnityEngine.UI;
 
 public enum CricketMatchFormat
 {
@@ -29,7 +29,7 @@ public class MatchManager : MonoBehaviour
     [SerializeField] private int maxOvers = 20;
 
     [Header("Optional UI and Events")]
-    [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private Text scoreText;
     [SerializeField] private UnityEvent onInningsCompleted;
     [SerializeField] private UnityEvent onMatchCompleted;
 
