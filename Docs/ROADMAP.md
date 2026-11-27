@@ -29,17 +29,21 @@ Unity project structure, an Editor greybox scene generator, first-pass batting/b
 ## Milestone 3 — Gameplay depth
 - [ ] Shot timing windows: defend, drive, cut, pull, sweep and loft.
 - [ ] Pace, swing, seam and spin bowling variations with tuned physics.
-- [ ] Fielder positioning, catching, ground fielding and wicketkeeping.
+- [x] Fielder pickup trigger and throw toward wicket for run-out attempts.
+- [ ] Fielder positioning, ground fielding and wicketkeeping AI.
 - [ ] Player movement, running between wickets and replay camera.
 
 ## Milestone 4 — Presentation
-- [ ] Original player rigs and animation state machines.
+- [x] Reusable Animator parameter/trigger driver for player actions.
+- [ ] Original player rigs, animation clips and complete animation state machines.
 - [ ] Stadium art, lighting, crowd ambience, commentary and effects.
-- [ ] Menus, team selection, toss, pause and match summary.
+- [x] Pause/resume controller with optional pause panel.
+- [ ] Menus, team selection, toss and match summary.
 - [ ] Original high-quality 3D assets and optimized materials.
 
 ## Milestone 5 — Android release preparation
-- [ ] Touch-first controls and configurable sensitivity.
+- [x] Mobile UI action methods for shot selection, bowling variations and running.
+- [ ] Touch-first layout and configurable sensitivity.
 - [ ] Quality presets, LODs, baked lighting and performance profiling.
 - [ ] Android build settings, device profiling and performance testing.
 - [ ] Save data, accessibility options and release testing.
