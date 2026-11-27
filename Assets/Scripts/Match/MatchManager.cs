@@ -140,6 +140,11 @@ public class MatchManager : MonoBehaviour
 
     // Use this for a wicket on a legal ball so the final wicket cannot
     // complete the innings before the delivery has been recorded.
+    public void RecordRunOutOnLegalDelivery()
+    {
+        RecordWicketOnLegalDelivery();
+    }
+
     public void RecordWicketOnLegalDelivery()
     {
         if (!CanScore()) return;
