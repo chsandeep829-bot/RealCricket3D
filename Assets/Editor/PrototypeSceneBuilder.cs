@@ -194,12 +194,12 @@ public static class PrototypeSceneBuilder
             for (int i = 0; i < 14; i++)
             {
                 float x = -20f + i * 3f;
-                Color color = (i % 3 == 0) ? crowdA.color :
-                    (i % 3 == 1 ? crowdB.color : crowdC.color);
+                Material crowdMaterial = (i % 3 == 0) ? crowdA :
+                    (i % 3 == 1 ? crowdB : crowdC);
                 CreateCrowdCluster("NorthCrowd_" + row + "_" + i,
-                    new Vector3(x, 6.2f + row * 0.45f, 22.2f + row * 0.55f), color);
+                    new Vector3(x, 6.2f + row * 0.45f, 22.2f + row * 0.55f), crowdMaterial);
                 CreateCrowdCluster("SouthCrowd_" + row + "_" + i,
-                    new Vector3(x, 6.2f + row * 0.45f, -22.2f - row * 0.55f), color);
+                    new Vector3(x, 6.2f + row * 0.45f, -22.2f - row * 0.55f), crowdMaterial);
             }
         }
 
@@ -241,14 +241,13 @@ public static class PrototypeSceneBuilder
         }
     }
 
-    private static void CreateCrowdCluster(string name, Vector3 position, Color color)
+    private static void CreateCrowdCluster(string name, Vector3 position, Material material)
     {
         GameObject crowd = GameObject.CreatePrimitive(PrimitiveType.Cube);
         crowd.name = name;
         crowd.transform.position = position;
         crowd.transform.localScale = new Vector3(0.42f, 0.32f, 0.24f);
-        crowd.GetComponent<Renderer>().sharedMaterial =
-            MakeMaterial(name + "_Material", color);
+        crowd.GetComponent<Renderer>().sharedMaterial = material;
     }
 
     private static void CreateFloodlight(string name, Vector3 position)
