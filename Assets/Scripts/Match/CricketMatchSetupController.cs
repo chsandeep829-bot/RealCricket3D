@@ -21,6 +21,7 @@ public class CricketMatchSetupController : MonoBehaviour
     public int FirstTeamIndex => firstTeamIndex;
     public int SecondTeamIndex => secondTeamIndex;
     public CricketMatchFormat SelectedFormat => selectedFormat;
+    public bool IsTossReady => tossWinnerIndex >= 0;
 
     public void SelectFirstTeam(int index)
     {
