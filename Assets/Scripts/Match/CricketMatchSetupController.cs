@@ -37,6 +37,34 @@ public class CricketMatchSetupController : MonoBehaviour
         UpdateStatus();
     }
 
+    public void SelectNextFirstTeam()
+    {
+        if (availableTeams == null || availableTeams.Length < 2) return;
+        for (int step = 1; step <= availableTeams.Length; step++)
+        {
+            int candidate = (firstTeamIndex + step) % availableTeams.Length;
+            if (candidate != secondTeamIndex)
+            {
+                SelectFirstTeam(candidate);
+                return;
+            }
+        }
+    }
+
+    public void SelectNextSecondTeam()
+    {
+        if (availableTeams == null || availableTeams.Length < 2) return;
+        for (int step = 1; step <= availableTeams.Length; step++)
+        {
+            int candidate = (secondTeamIndex + step) % availableTeams.Length;
+            if (candidate != firstTeamIndex)
+            {
+                SelectSecondTeam(candidate);
+                return;
+            }
+        }
+    }
+
     public void SelectT20() => selectedFormat = CricketMatchFormat.T20;
     public void SelectODI() => selectedFormat = CricketMatchFormat.ODI;
     public void SelectTest() => selectedFormat = CricketMatchFormat.Test;
