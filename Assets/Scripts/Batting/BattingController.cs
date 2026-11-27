@@ -7,7 +7,7 @@ public class BattingController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform bat;
     [SerializeField] private Transform shotDirection;
-    [SerializeField] private CricketPlayerAnimator playerAnimator;
+    [SerializeField] private CricketPlayerAnimator playerAnimator;\n    [SerializeField] private ProceduralCricketPlayerMotion proceduralMotion;
 
     [Header("Swing")]
     [SerializeField, Min(0.05f)] private float swingDuration = 0.22f;
@@ -49,7 +49,7 @@ public class BattingController : MonoBehaviour
     {
         isSwinging = true;
         swingProgress = 0f;
-        if (playerAnimator != null) playerAnimator.PlayBat();
+        if (playerAnimator != null) playerAnimator.PlayBat();\n        if (proceduralMotion != null) proceduralMotion.PlayBat();
         Quaternion target = restingRotation * Quaternion.Euler(swingRotation);
         float elapsed = 0f;
         float totalDuration = swingDuration * 2f;
