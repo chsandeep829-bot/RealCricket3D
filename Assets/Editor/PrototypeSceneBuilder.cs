@@ -323,6 +323,7 @@ public static class PrototypeSceneBuilder
     {
         GameObject fielder = CreatePlayer(name, position, new Color(0.9f, 0.72f, 0.12f));
         FielderAI fielderAI = fielder.AddComponent<FielderAI>();
+        SetFloatValue(fielderAI, "groundHeight", 1f);
         GameObject catchArea = new GameObject("CatchTrigger");
         catchArea.transform.SetParent(fielder.transform);
         catchArea.transform.localPosition = new Vector3(0f, 0.8f, 0f);
@@ -337,7 +338,8 @@ public static class PrototypeSceneBuilder
         RunningBetweenWicketsController running)
     {
         GameObject fielder = CreatePlayer("PrototypeFielder", new Vector3(4f, 0f, 0f), Color.yellow);
-        fielder.AddComponent<FielderAI>();
+        FielderAI fielderAI = fielder.AddComponent<FielderAI>();
+        SetFloatValue(fielderAI, "groundHeight", 1f);
         GameObject pickup = new GameObject("FielderPickupTrigger");
         pickup.transform.SetParent(fielder.transform);
         pickup.transform.localPosition = Vector3.zero;
@@ -407,6 +409,19 @@ public static class PrototypeSceneBuilder
         material.color = color;
         EditorUtility.SetDirty(material);
         return material;
+    }
+
+    private static void SetFloatValue(Object target, string propertyName, float value)
+    {
+        SerializedObject serialized = new SerializedObject(target);
+        SerializedProperty property = serialized.FindProperty(propertyName);
+        if (property == null)
+        {
+            Debug.LogWarning("Serialized float not found: " + propertyName + " on " + target.name);
+            return;
+        }
+        property.floatValue = value;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static void SetObjectReference(Object target, string propertyName, Object value)
