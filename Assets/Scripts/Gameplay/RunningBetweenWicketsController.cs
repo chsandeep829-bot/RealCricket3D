@@ -13,7 +13,6 @@ public class RunningBetweenWicketsController : MonoBehaviour
 
     [Header("Running")]
     [SerializeField, Min(0.1f)] private float runSpeed = 5f;
-    [SerializeField, Min(0.1f)] private float runDuration = 1.25f;
     [SerializeField, Min(1)] private int maxQueuedRuns = 3;
     [SerializeField] private UnityEvent onRunCompleted;
 
@@ -71,7 +70,8 @@ public class RunningBetweenWicketsController : MonoBehaviour
             Vector3 nonStrikerTarget = strikerCrease.position;
 
             float elapsed = 0f;
-            float duration = Mathf.Max(0.1f, runDuration);
+            float distance = Vector3.Distance(strikerStart, strikerTarget);
+            float duration = Mathf.Max(0.1f, distance / runSpeed);
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
