@@ -18,6 +18,15 @@ public class BowlingVariationController : MonoBehaviour
     [SerializeField] private Transform releasePoint;
     [SerializeField] private DeliveryProfile[] profiles;
 
+    [Header("Bowling controls")]
+    [SerializeField, Range(-1f, 1f)] private float line;
+    [SerializeField, Range(0f, 1f)] private float length = 0.5f;
+    [SerializeField, Range(-12f, 12f)] private float maxLineAngle = 8f;
+    [SerializeField] private Vector2 lengthAngleRange = new Vector2(-3f, 9f);
+
+    public void SetLine(float normalizedLine) => line = Mathf.Clamp(normalizedLine, -1f, 1f);
+    public void SetLength(float normalizedLength) => length = Mathf.Clamp01(normalizedLength);
+
     public void Bowl(DeliveryType type)
     {
         if (ballPrefab == null || releasePoint == null)
@@ -34,16 +43,15 @@ public class BowlingVariationController : MonoBehaviour
         }
 
         CricketBall ball = Instantiate(ballPrefab, releasePoint.position, releasePoint.rotation);
-        Vector3 direction = releasePoint.forward;
+        float variation = profile.variationAmount > 0f
+            ? Random.Range(-profile.variationAmount, profile.variationAmount) : 0f;
+        float lineAngle = line * maxLineAngle + variation * maxLineAngle;
+        float lengthAngle = Mathf.Lerp(lengthAngleRange.x, lengthAngleRange.y, length);
+        Vector3 direction = Quaternion.AngleAxis(lineAngle, releasePoint.up)
+            * Quaternion.AngleAxis(lengthAngle, releasePoint.right)
+            * releasePoint.forward;
 
-        // Small, readable prototype variation. Tune with the pitch and ball scale.
-        if (profile.variationAmount > 0f)
-        {
-            float side = Random.Range(-profile.variationAmount, profile.variationAmount);
-            direction = (direction + releasePoint.right * side).normalized;
-        }
-
-        ball.Bowl(direction * profile.speed);
+        ball.Bowl(direction.normalized * profile.speed);
         if (ball.Body != null)
             ball.Body.angularVelocity = releasePoint.TransformDirection(profile.spin);
     }
