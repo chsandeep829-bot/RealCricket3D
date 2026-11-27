@@ -18,7 +18,9 @@ public class RunningBetweenWicketsController : MonoBehaviour
 
     private int queuedRuns;
     private bool isRunning;
-    private bool stopAfterCurrentRun;\n    private ProceduralCricketPlayerMotion strikerMotion;\n    private ProceduralCricketPlayerMotion nonStrikerMotion;
+    private bool stopAfterCurrentRun;
+    private ProceduralCricketPlayerMotion strikerMotion;
+    private ProceduralCricketPlayerMotion nonStrikerMotion;
 
     public bool IsRunning => isRunning;
     public int QueuedRuns => queuedRuns;
