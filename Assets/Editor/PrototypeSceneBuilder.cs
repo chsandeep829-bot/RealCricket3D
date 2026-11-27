@@ -106,7 +106,11 @@ public static class PrototypeSceneBuilder
         GameObject fieldingManager = new GameObject("FieldingTeamManager");
         fieldingManager.AddComponent<FielderTeamController>();
 
-        CreateControls(bowling, variations, batting, shots, running, match);
+        CricketMatchPauseController pauseController =
+            matchObject.AddComponent<CricketMatchPauseController>();
+
+        CreateControls(bowling, variations, batting, shots, running, match,
+            pauseController);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene, ScenePath);
@@ -224,7 +228,8 @@ public static class PrototypeSceneBuilder
 
     private static void CreateControls(BowlingController bowling, BowlingVariationController variations,
         BattingController batting, ShotSelectionController shots,
-        RunningBetweenWicketsController running, MatchManager match)
+        RunningBetweenWicketsController running, MatchManager match,
+        CricketMatchPauseController pauseController)
     {
         if (Object.FindObjectOfType<EventSystem>() == null)
         {
@@ -262,6 +267,8 @@ public static class PrototypeSceneBuilder
         CreateButton(canvas.transform, "DRIVE", new Vector2(0.32f, 0.08f), shots.SelectDrive);
         CreateButton(canvas.transform, "PULL", new Vector2(0.20f, 0.08f), shots.SelectPull);
         CreateButton(canvas.transform, "LOFT", new Vector2(0.08f, 0.08f), shots.SelectLofted);
+        CreateButton(canvas.transform, "PAUSE / RESUME",
+            new Vector2(0.94f, 0.93f), pauseController.TogglePause);
     }
 
     private static void CreateButton(Transform parent, string label, Vector2 anchor, UnityEngine.Events.UnityAction action)
