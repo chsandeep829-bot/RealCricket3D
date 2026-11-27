@@ -20,9 +20,15 @@ public static class RealCricketAndroidBuild
         const string outputPath = outputDirectory + "/CRICNOVA3D.apk";
         Directory.CreateDirectory(outputDirectory);
 
+        PlayerSettings.productName = "CRICNOVA 3D";
+        PlayerSettings.companyName = "CRICNOVA STUDIOS";
         PlayerSettings.SetApplicationIdentifier(
             UnityEditor.Build.NamedBuildTarget.Android,
-            "com.sandeep.realcricket3d");
+            "com.cricnovastudios.cricnova3d");
+
+        Texture2D cricnovaIcon = Resources.Load<Texture2D>("Branding/CricnovaLogo");
+        if (cricnovaIcon != null)
+            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Android, new[] { cricnovaIcon });
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
 
