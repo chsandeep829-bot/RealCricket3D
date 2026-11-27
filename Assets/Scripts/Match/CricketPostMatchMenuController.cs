@@ -10,6 +10,7 @@ public class CricketPostMatchMenuController : MonoBehaviour
     [SerializeField] private MatchManager matchManager;
     [SerializeField] private CricketCareerSaveSystem careerSave;
     [SerializeField] private CricketTournamentManager tournament;
+    [SerializeField] private CricketMatchProgressionBridge progression;
     [SerializeField] private GameObject resultPanel;
     [SerializeField] private Text resultText;
     [SerializeField] private Text careerText;
@@ -25,6 +26,7 @@ public class CricketPostMatchMenuController : MonoBehaviour
     {
         if (matchManager == null || !matchManager.IsMatchCompleted || resultShown) return;
         resultShown = true;
+        if (progression != null) progression.ProcessCompletedMatch();
         RefreshResultPanel();
         if (resultPanel != null) resultPanel.SetActive(true);
     }
