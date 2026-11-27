@@ -466,27 +466,35 @@ public static class PrototypeSceneBuilder
 
         CreateMenuText(card.transform, "SELECT TEAMS",
             new Vector2(0.5f, 0.65f), new Vector2(500f, 34f), 19);
+        Button batButton = null;
+        Button bowlButton = null;
         CreateButton(card.transform, "CHANGE TEAM A",
-            new Vector2(0.25f, 0.56f), setup.SelectNextFirstTeam,
+            new Vector2(0.25f, 0.56f), () => { setup.SelectNextFirstTeam(); if (batButton != null) batButton.interactable = false; if (bowlButton != null) bowlButton.interactable = false; },
             new Vector2(330f, 76f), new Color(0.045f, 0.13f, 0.22f, 1f), 22);
         CreateButton(card.transform, "CHANGE TEAM B",
-            new Vector2(0.75f, 0.56f), setup.SelectNextSecondTeam,
+            new Vector2(0.75f, 0.56f), () => { setup.SelectNextSecondTeam(); if (batButton != null) batButton.interactable = false; if (bowlButton != null) bowlButton.interactable = false; },
             new Vector2(330f, 76f), new Color(0.045f, 0.13f, 0.22f, 1f), 22);
 
         CreateMenuText(card.transform, "MATCH FORMAT",
             new Vector2(0.5f, 0.43f), new Vector2(500f, 34f), 19);
         CreateButton(card.transform, "T20",
-            new Vector2(0.25f, 0.35f), setup.SelectT20,
+            new Vector2(0.25f, 0.35f), () => { setup.SelectT20(); if (batButton != null) batButton.interactable = false; if (bowlButton != null) bowlButton.interactable = false; },
             new Vector2(230f, 68f), new Color(0.12f, 0.16f, 0.23f, 1f), 23);
         CreateButton(card.transform, "ODI",
-            new Vector2(0.50f, 0.35f), setup.SelectODI,
+            new Vector2(0.50f, 0.35f), () => { setup.SelectODI(); if (batButton != null) batButton.interactable = false; if (bowlButton != null) bowlButton.interactable = false; },
             new Vector2(230f, 68f), new Color(0.12f, 0.16f, 0.23f, 1f), 23);
         CreateButton(card.transform, "TEST",
-            new Vector2(0.75f, 0.35f), setup.SelectTest,
+            new Vector2(0.75f, 0.35f), () => { setup.SelectTest(); if (batButton != null) batButton.interactable = false; if (bowlButton != null) bowlButton.interactable = false; },
             new Vector2(230f, 68f), new Color(0.12f, 0.16f, 0.23f, 1f), 23);
 
         CreateButton(card.transform, "TOSS",
-            new Vector2(0.50f, 0.22f), setup.PerformToss,
+            new Vector2(0.50f, 0.22f), () =>
+            {
+                setup.PerformToss();
+                bool tossReady = setup.IsTossReady;
+                if (batButton != null) batButton.interactable = tossReady;
+                if (bowlButton != null) bowlButton.interactable = tossReady;
+            },
             new Vector2(280f, 70f), new Color(0.72f, 0.48f, 0.10f, 1f), 24);
         CreateButton(card.transform, "START 4-TEAM CUP",
             new Vector2(0.50f, 0.115f), () =>
@@ -498,7 +506,7 @@ public static class PrototypeSceneBuilder
             },
             new Vector2(390f, 66f), new Color(0.08f, 0.28f, 0.25f, 1f), 21);
 
-        CreateButton(card.transform, "WINNER BAT",
+        batButton = CreateButton(card.transform, "WINNER BAT",
             new Vector2(0.28f, 0.045f), () =>
             {
                 if (!setup.IsTossReady || !setup.CanStartMatch) return;
@@ -507,7 +515,7 @@ public static class PrototypeSceneBuilder
                 controlsRoot.SetActive(true);
             },
             new Vector2(300f, 62f), new Color(0.08f, 0.28f, 0.20f, 1f), 21);
-        CreateButton(card.transform, "WINNER BOWL",
+        bowlButton = CreateButton(card.transform, "WINNER BOWL",
             new Vector2(0.72f, 0.045f), () =>
             {
                 if (!setup.IsTossReady || !setup.CanStartMatch) return;
@@ -585,13 +593,13 @@ public static class PrototypeSceneBuilder
         SetObjectReference(swipeInput, "shotSelection", shots);
     }
 
-    private static void CreateButton(Transform parent, string label, Vector2 anchor, UnityEngine.Events.UnityAction action)
+    private static Button CreateButton(Transform parent, string label, Vector2 anchor, UnityEngine.Events.UnityAction action)
     {
-        CreateButton(parent, label, anchor, action, new Vector2(180f, 76f),
+        return CreateButton(parent, label, anchor, action, new Vector2(180f, 76f),
             new Color(0.045f, 0.13f, 0.22f, 0.96f), 24);
     }
 
-    private static void CreateButton(Transform parent, string label, Vector2 anchor,
+    private static Button CreateButton(Transform parent, string label, Vector2 anchor,
         UnityEngine.Events.UnityAction action, Vector2 size, Color buttonColor, int fontSize)
     {
         GameObject buttonObject = new GameObject(label + "Button", typeof(RectTransform), typeof(Image), typeof(Button));
@@ -626,6 +634,7 @@ public static class PrototypeSceneBuilder
         text.resizeTextMinSize = 14;
         text.resizeTextMaxSize = fontSize;
         text.raycastTarget = false;
+        return button;
     }
 
     private static void CreateRunOutZone(Vector3 position, MatchManager match,
