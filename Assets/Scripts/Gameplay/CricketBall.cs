@@ -43,6 +43,7 @@ public class CricketBall : MonoBehaviour
         deliveryResolved = false;
         body.isKinematic = false;
         body.velocity = velocity;
+        FocusCamera(2.4f);
     }
 
     public void Hit(Vector3 velocity)
@@ -52,6 +53,7 @@ public class CricketBall : MonoBehaviour
         deliveryResolved = false;
         body.isKinematic = false;
         body.velocity = velocity;
+        FocusCamera(2.8f);
     }
 
     public void ApplyFieldingThrow(Vector3 velocity)
@@ -71,6 +73,12 @@ public class CricketBall : MonoBehaviour
         dismissalRecorded = false;
         deliveryResolved = false;
         spawnedAt = Time.time;
+    }
+
+    private void FocusCamera(float duration)
+    {
+        CricketCameraFollow cameraFollow = FindAnyObjectByType<CricketCameraFollow>();
+        if (cameraFollow != null) cameraFollow.FollowTemporarily(transform, duration);
     }
 
     public void MarkDismissal()
