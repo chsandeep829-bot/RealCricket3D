@@ -16,7 +16,9 @@ Unity project structure, an Editor greybox scene generator, first-pass batting/b
 ## Milestone 2 — Cricket rules and match flow
 - [x] Legal delivery, wide, no-ball, bye and leg-bye scoring entry points.
 - [x] Innings transitions, target chase and basic match result.
-- [ ] Strike rotation and end changes.
+- [x] Odd-run strike rotation and end changes after six legal balls.
+- [x] Manual running-between-wickets controller with queued one/two-run requests.
+- [ ] Connect running controls and batter crease markers in the generated scene.
 - [ ] Run-outs, catches, stumping and overthrow rules.
 - [ ] Better wicket/no-ball/wide detection and dismissal validation.
 - [ ] Test declarations, follow-on and day/session rules.
