@@ -48,6 +48,15 @@ public class CricketBall : MonoBehaviour
         body.velocity = velocity;
     }
 
+    // Applies a fielder's return throw without changing whether the ball was hit
+    // or clearing a dismissal already recorded by the match logic.
+    public void ApplyFieldingThrow(Vector3 velocity)
+    {
+        if (body == null || !hasBeenHit || dismissalRecorded) return;
+        body.isKinematic = false;
+        body.velocity = velocity;
+    }
+
     public void ResetBall(Vector3 position, Quaternion rotation)
     {
         body.velocity = Vector3.zero;
