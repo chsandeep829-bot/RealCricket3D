@@ -32,9 +32,12 @@ public class FielderThrowController : MonoBehaviour
         if (Time.time - lastThrowTime < throwCooldown) return;
         lastThrowTime = Time.time;
 
-        Vector3 direction = (throwTarget.position - ball.transform.position).normalized;
+        Vector3 toTarget = throwTarget.position - ball.transform.position;
+        if (toTarget.sqrMagnitude < 0.001f) return;
+
+        Vector3 direction = toTarget.normalized;
         direction = (direction + Vector3.up * upwardArc).normalized;
-        ball.Hit(direction * throwSpeed);
+        ball.ApplyFieldingThrow(direction * throwSpeed);
         onBallThrown?.Invoke();
     }
 }
