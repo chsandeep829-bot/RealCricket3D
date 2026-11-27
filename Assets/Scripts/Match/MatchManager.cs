@@ -158,7 +158,7 @@ public class MatchManager : MonoBehaviour
         if (!CanScore()) return;
         int total = Mathf.Max(0, penaltyRuns) + Mathf.Max(0, additionalRuns);
         runs += total;
-        RotateStrikeForRuns(total);
+        RotateStrikeForRuns(Mathf.Max(0, additionalRuns));
         SaveCurrentInnings();
         if (target > 0 && runs >= target) CompleteMatch();
         else RefreshScoreboard();
@@ -169,7 +169,7 @@ public class MatchManager : MonoBehaviour
         if (!CanScore()) return;
         int total = Mathf.Max(0, penaltyRuns) + Mathf.Max(0, batterRuns);
         runs += total;
-        RotateStrikeForRuns(total);
+        RotateStrikeForRuns(Mathf.Max(0, batterRuns));
         SaveCurrentInnings();
         if (target > 0 && runs >= target) CompleteMatch();
         else RefreshScoreboard();
