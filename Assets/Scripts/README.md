@@ -6,6 +6,8 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 - `Gameplay/CricketBall.cs`: Rigidbody-based ball state and velocity.
 - `Gameplay/CricketCameraFollow.cs`: smooth camera follow for a selected player.
 - `Gameplay/RunningBetweenWicketsController.cs`: queues one/two-run requests, animates the two batter transforms between crease markers and awards runs only after each completed crossing.
+- `Fielding/FielderCatchZone.cs`: detects a descending airborne hit ball inside a fielder catch volume and records a caught dismissal once.
+- `Fielding/RunOutWicketZone.cs`: detects a hit ball reaching a wicket zone while batters are running, cancels queued runs and records a run-out.
 - `Bowling/BowlingController.cs`: creates and releases a delivery.
 - `Batting/BattingController.cs`: swing action and ball contact.
 - `Match/MatchManager.cs`: T20, ODI and simplified four-innings Test match flow, score tracking, innings transitions, chase targets and results.
@@ -29,8 +31,10 @@ The format and team names can be changed on the MatchManager component in the Un
 4. Open `Assets/Scenes/CricketPrototype.unity` and press Play.
 5. Assign the generated scene's score text and gameplay references if the builder reports any missing references.
 6. To enable running, add `RunningBetweenWicketsController` to a scene object; assign both batter transforms, the two crease marker transforms and `MatchManager`. Connect mobile Run buttons to `RequestRun` or `RequestTwoRuns`. Set `runSpeed` to tune movement.
+7. For catches, add a trigger collider and `FielderCatchZone` to each fielder's catch area. Assign `MatchManager` and tune the minimum/maximum catch heights. The ball must be hit and descending.
+8. For run-outs, add a trigger collider at the stumps and attach `RunOutWicketZone`. Assign `MatchManager` and the active `RunningBetweenWicketsController`. The ball must reach the wicket while a run is in progress.
 
 ## Important prototype limitations
-This repository is still an early playable-prototype foundation, not a finished commercial cricket game. Player models are placeholders; animations, team selection, complete fielding/catching/run-outs, strike rotation, innings presentation, audio, commentary, replay, save data, online multiplayer and Android performance testing remain to be built and tested.
+This repository is still an early playable-prototype foundation, not a finished commercial cricket game. Player models are placeholders; animations, team selection, complete fielding animations, stumping, throw animations, innings presentation, audio, commentary, replay, save data, online multiplayer and Android performance testing remain to be built and tested.
 
 A milestone is complete only after its scene and assets are integrated in Unity, builds successfully, and is tested in the Unity Editor and on target Android devices. Repository scripts alone do not constitute a finished game.
