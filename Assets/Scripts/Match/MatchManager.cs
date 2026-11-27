@@ -331,20 +331,20 @@ public class MatchManager : MonoBehaviour
             float requiredRunRate = ballsRemaining > 0
                 ? Mathf.Max(0, target - runs) / (ballsRemaining / 6f)
                 : 0f;
-            targetText = "\\nTARGET  " + target +
+            targetText = "\nTARGET  " + target +
                 "   NEED  " + Mathf.Max(0, target - runs) +
                 "   RRR  " + requiredRunRate.ToString("0.00");
         }
 
-        string statusText = matchCompleted ? "\\n" + GetResultText() :
-            inningsCompleted ? "\\nINNINGS COMPLETE" : string.Empty;
+        string statusText = matchCompleted ? "\n" + GetResultText() :
+            inningsCompleted ? "\nINNINGS COMPLETE" : string.Empty;
 
         scoreText.text =
             BattingTeamName + "  " + runs + "/" + wickets +
-            "\\nINNINGS  " + inningsNumber + "/" + InningsCount +
-            "\\nOVERS  " + oversText + " / " + maxOvers +
+            "\nINNINGS  " + inningsNumber + "/" + InningsCount +
+            "\nOVERS  " + oversText + " / " + maxOvers +
             "   CRR  " + currentRunRate.ToString("0.00") +
-            "\\nSTRIKER END  " + (strikerAtBowlerEnd ? "BOWLER END" : "SCORE END") +
+            "\nSTRIKER END  " + (strikerAtBowlerEnd ? "BOWLER END" : "SCORE END") +
             targetText + statusText;
     }
 }
