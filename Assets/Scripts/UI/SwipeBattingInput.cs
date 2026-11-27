@@ -11,9 +11,35 @@ public class SwipeBattingInput : MonoBehaviour, IPointerDownHandler, IPointerUpH
 {
     [SerializeField] private ShotSelectionController shotSelection;
     [SerializeField, Min(10f)] private float minimumSwipePixels = 65f;
+    [SerializeField, Range(0.5f, 2f)] private float swipeSensitivity = 1f;
 
+    private const string SensitivityKey = "RealCricket3D.Controls.SwipeSensitivity";
     private Vector2 pointerStart;
     private bool tracking;
+
+    public float SwipeSensitivity => swipeSensitivity;
+    public float SensitivitySliderValue => Mathf.InverseLerp(0.5f, 2f, swipeSensitivity);
+
+    private void Awake()
+    {
+        if (PlayerPrefs.HasKey(SensitivityKey))
+            swipeSensitivity = Mathf.Clamp(PlayerPrefs.GetFloat(SensitivityKey, 1f), 0.5f, 2f);
+    }
+
+    /// <summary>Connect a 0–1 UI Slider to configure and persist swipe sensitivity.</summary>
+    public void SetSensitivityFromSlider(float normalizedValue)
+    {
+        swipeSensitivity = Mathf.Lerp(0.5f, 2f, Mathf.Clamp01(normalizedValue));
+        PlayerPrefs.SetFloat(SensitivityKey, swipeSensitivity);
+        PlayerPrefs.Save();
+    }
+
+    public void ResetSensitivity()
+    {
+        swipeSensitivity = 1f;
+        PlayerPrefs.SetFloat(SensitivityKey, swipeSensitivity);
+        PlayerPrefs.Save();
+    }
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -31,9 +57,13 @@ public class SwipeBattingInput : MonoBehaviour, IPointerDownHandler, IPointerUpH
         tracking = false;
 
         Vector2 delta = eventData.position - pointerStart;
-        if (delta.magnitude < minimumSwipePixels || shotSelection == null) return;
+        if (shotSelection == null) return;
+
+        float requiredPixels = minimumSwipePixels / Mathf.Max(0.5f, swipeSensitivity);
+        if (delta.magnitude < requiredPixels) return;
 
         Vector2 swipe = delta.normalized;
+        swipe.x = Mathf.Clamp(swipe.x * swipeSensitivity, -1f, 1f);
         shotSelection.PlaySwipeShot(swipe);
     }
 
