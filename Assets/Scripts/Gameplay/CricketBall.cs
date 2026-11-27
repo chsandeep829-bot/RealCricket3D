@@ -9,9 +9,12 @@ public class CricketBall : MonoBehaviour
     private float spawnedAt;
     private bool hasBeenHit;
     private bool dismissalRecorded;
+    private bool deliveryResolved;
 
     public bool HasBeenHit => hasBeenHit;
     public bool DismissalRecorded => dismissalRecorded;
+    public bool DeliveryResolved => deliveryResolved;
+    public float SpawnedAt => spawnedAt;
     public Rigidbody Body => body;
 
     private void Awake()
@@ -24,6 +27,7 @@ public class CricketBall : MonoBehaviour
         spawnedAt = Time.time;
         hasBeenHit = false;
         dismissalRecorded = false;
+        deliveryResolved = false;
     }
 
     private void Update()
@@ -36,6 +40,7 @@ public class CricketBall : MonoBehaviour
     {
         hasBeenHit = false;
         dismissalRecorded = false;
+        deliveryResolved = false;
         body.isKinematic = false;
         body.velocity = velocity;
     }
@@ -44,15 +49,14 @@ public class CricketBall : MonoBehaviour
     {
         hasBeenHit = true;
         dismissalRecorded = false;
+        deliveryResolved = false;
         body.isKinematic = false;
         body.velocity = velocity;
     }
 
-    // Applies a fielder's return throw without changing whether the ball was hit
-    // or clearing a dismissal already recorded by the match logic.
     public void ApplyFieldingThrow(Vector3 velocity)
     {
-        if (body == null || !hasBeenHit || dismissalRecorded) return;
+        if (body == null || !hasBeenHit || dismissalRecorded || deliveryResolved) return;
         body.isKinematic = false;
         body.velocity = velocity;
     }
@@ -65,11 +69,20 @@ public class CricketBall : MonoBehaviour
         transform.SetPositionAndRotation(position, rotation);
         hasBeenHit = false;
         dismissalRecorded = false;
+        deliveryResolved = false;
         spawnedAt = Time.time;
     }
 
     public void MarkDismissal()
     {
         dismissalRecorded = true;
+        deliveryResolved = true;
+    }
+
+    public bool MarkDeliveryResolved()
+    {
+        if (deliveryResolved || dismissalRecorded) return false;
+        deliveryResolved = true;
+        return true;
     }
 }
