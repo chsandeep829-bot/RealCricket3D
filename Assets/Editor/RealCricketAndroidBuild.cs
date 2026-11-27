@@ -9,11 +9,12 @@ public static class RealCricketAndroidBuild
     public static void BuildAndroid()
     {
         Debug.Log("Preparing REAL CRICKET 3D Android build...");
-        RealCricketBrandingAssets.ConfigureAndroidIcon();
 
         EditorUserBuildSettings.SwitchActiveBuildTarget(
             BuildTargetGroup.Android,
             BuildTarget.Android);
+
+        RealCricketBrandingAssets.ConfigureAndroidIcon();
 
         PrototypeSceneBuilder.BuildPrototypeSceneForBuild();
 
