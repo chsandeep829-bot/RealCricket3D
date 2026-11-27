@@ -15,14 +15,14 @@ public class MatchScoringRules : MonoBehaviour
     public void Wide(int additionalRuns = 0)
     {
         if (matchManager == null) return;
-        matchManager.AddRuns(widePenalty + Mathf.Max(0, additionalRuns));
+        matchManager.RecordWide(widePenalty, additionalRuns);
         // A wide does not count as a legal ball.
     }
 
     public void NoBall(int batterRuns = 0)
     {
         if (matchManager == null) return;
-        matchManager.AddRuns(noBallPenalty + Mathf.Max(0, batterRuns));
+        matchManager.RecordNoBall(noBallPenalty, batterRuns);
         // A no-ball does not count as a legal ball.
     }
 
