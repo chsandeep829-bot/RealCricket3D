@@ -7,6 +7,7 @@ public class CricketTournamentState
     public string[] teams = new string[4];
     public string[] winners = new string[3];
     public int completedMatches;
+    public bool isCreated;
 }
 
 /// <summary>
@@ -19,7 +20,8 @@ public class CricketTournamentManager : MonoBehaviour
     [SerializeField] private CricketTournamentState state = new CricketTournamentState();
 
     public CricketTournamentState State => state;
-    public bool IsComplete => state != null && state.completedMatches >= 3;
+    public bool IsComplete => state != null && state.isCreated && state.completedMatches >= 3;
+    public bool HasTournament => state != null && state.isCreated;
 
     public void CreateTournament(string team1, string team2, string team3, string team4)
     {
@@ -27,14 +29,15 @@ public class CricketTournamentManager : MonoBehaviour
         {
             teams = new[] { Clean(team1), Clean(team2), Clean(team3), Clean(team4) },
             winners = new string[3],
-            completedMatches = 0
+            completedMatches = 0,
+            isCreated = true
         };
         SaveTournament();
     }
 
     public string GetCurrentTeamA()
     {
-        if (state == null) return string.Empty;
+        if (state == null || !state.isCreated || IsComplete) return string.Empty;
         if (state.completedMatches == 0) return state.teams[0];
         if (state.completedMatches == 1) return state.teams[2];
         if (state.completedMatches == 2) return state.winners[0];
@@ -43,7 +46,7 @@ public class CricketTournamentManager : MonoBehaviour
 
     public string GetCurrentTeamB()
     {
-        if (state == null) return string.Empty;
+        if (state == null || !state.isCreated || IsComplete) return string.Empty;
         if (state.completedMatches == 0) return state.teams[1];
         if (state.completedMatches == 1) return state.teams[3];
         if (state.completedMatches == 2) return state.winners[1];
