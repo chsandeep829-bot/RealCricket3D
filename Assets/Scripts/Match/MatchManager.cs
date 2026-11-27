@@ -175,6 +175,17 @@ public class MatchManager : MonoBehaviour
         else RefreshScoreboard();
     }
 
+    // Called once for each completed run while batters physically cross.
+    public void RecordRunningRuns(int completedRuns)
+    {
+        if (!CanScore() || completedRuns <= 0) return;
+        runs += completedRuns;
+        RotateStrikeForRuns(completedRuns);
+        SaveCurrentInnings();
+        if (target > 0 && runs >= target) CompleteMatch();
+        else RefreshScoreboard();
+    }
+
     public void RecordBye(int byeRuns)
     {
         if (!CanScore() || byeRuns < 0) return;
