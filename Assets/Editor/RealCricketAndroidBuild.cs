@@ -8,7 +8,7 @@ public static class RealCricketAndroidBuild
 {
     public static void BuildAndroid()
     {
-        Debug.Log("Preparing RealCricket3D Android build...");
+        Debug.Log("Preparing CRICNOVA 3D Android build...");
 
         EditorUserBuildSettings.SwitchActiveBuildTarget(
             BuildTargetGroup.Android,
@@ -17,7 +17,7 @@ public static class RealCricketAndroidBuild
         PrototypeSceneBuilder.BuildPrototypeSceneForBuild();
 
         const string outputDirectory = "Builds/Android";
-        const string outputPath = outputDirectory + "/RealCricket3D.apk";
+        const string outputPath = outputDirectory + "/CRICNOVA3D.apk";
         Directory.CreateDirectory(outputDirectory);
 
         PlayerSettings.SetApplicationIdentifier(
