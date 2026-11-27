@@ -8,8 +8,10 @@ public class CricketBall : MonoBehaviour
 
     private float spawnedAt;
     private bool hasBeenHit;
+    private bool dismissalRecorded;
 
     public bool HasBeenHit => hasBeenHit;
+    public bool DismissalRecorded => dismissalRecorded;
     public Rigidbody Body => body;
 
     private void Awake()
@@ -21,6 +23,7 @@ public class CricketBall : MonoBehaviour
     {
         spawnedAt = Time.time;
         hasBeenHit = false;
+        dismissalRecorded = false;
     }
 
     private void Update()
@@ -32,6 +35,7 @@ public class CricketBall : MonoBehaviour
     public void Bowl(Vector3 velocity)
     {
         hasBeenHit = false;
+        dismissalRecorded = false;
         body.isKinematic = false;
         body.velocity = velocity;
     }
@@ -39,6 +43,7 @@ public class CricketBall : MonoBehaviour
     public void Hit(Vector3 velocity)
     {
         hasBeenHit = true;
+        dismissalRecorded = false;
         body.isKinematic = false;
         body.velocity = velocity;
     }
@@ -50,6 +55,12 @@ public class CricketBall : MonoBehaviour
         body.isKinematic = true;
         transform.SetPositionAndRotation(position, rotation);
         hasBeenHit = false;
+        dismissalRecorded = false;
         spawnedAt = Time.time;
+    }
+
+    public void MarkDismissal()
+    {
+        dismissalRecorded = true;
     }
 }
