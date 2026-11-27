@@ -76,6 +76,7 @@ public static class PrototypeSceneBuilder
         SetObjectReference(postMatch, "matchManager", match);
         SetObjectReference(postMatch, "careerSave", careerSave);
         SetObjectReference(postMatch, "tournament", tournament);
+        SetObjectReference(postMatch, "progression", progression);
 
         GameObject bowlingObject = new GameObject("BowlingController");
         BowlingController bowling = bowlingObject.AddComponent<BowlingController>();
