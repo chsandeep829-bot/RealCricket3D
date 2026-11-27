@@ -80,7 +80,8 @@ public static class PrototypeSceneBuilder
         GameObject bowlingObject = new GameObject("BowlingController");
         BowlingController bowling = bowlingObject.AddComponent<BowlingController>();
         SetObjectReference(bowling, "ballPrefab", ballPrefab);
-        SetObjectReference(bowling, "releasePoint", release.transform);\n        SetObjectReference(bowling, "playerMotion", bowler.GetComponent<ProceduralCricketPlayerMotion>());
+        SetObjectReference(bowling, "releasePoint", release.transform);
+        SetObjectReference(bowling, "playerMotion", bowler.GetComponent<ProceduralCricketPlayerMotion>());
 
         BowlingVariationController variations = bowlingObject.AddComponent<BowlingVariationController>();
         SetObjectReference(variations, "ballPrefab", ballPrefab);
@@ -89,7 +90,8 @@ public static class PrototypeSceneBuilder
 
         BattingController batting = batter.AddComponent<BattingController>();
         SetObjectReference(batting, "bat", bat);
-        SetObjectReference(batting, "shotDirection", shotDirection);\n        SetObjectReference(batting, "proceduralMotion", batter.GetComponent<ProceduralCricketPlayerMotion>());
+        SetObjectReference(batting, "shotDirection", shotDirection);
+        SetObjectReference(batting, "proceduralMotion", batter.GetComponent<ProceduralCricketPlayerMotion>());
 
         ShotSelectionController shots = batter.AddComponent<ShotSelectionController>();
         SetObjectReference(shots, "battingController", batting);
