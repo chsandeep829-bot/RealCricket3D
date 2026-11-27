@@ -48,6 +48,15 @@ public class CricketCareerSaveSystem : MonoBehaviour
         SaveCareer();
     }
 
+    public void RecordCompletedMatch(MatchManager match, string playerTeamName)
+    {
+        if (match == null || !match.IsMatchCompleted || string.IsNullOrWhiteSpace(playerTeamName)) return;
+        string result = match.MatchResultText;
+        bool drawn = result == "MATCH DRAWN" || result == "MATCH TIED";
+        bool won = !drawn && result.StartsWith(playerTeamName.Trim(), StringComparison.OrdinalIgnoreCase);
+        RecordMatch(won, drawn, match.GetTeamTotalRuns(playerTeamName), match.GetTeamTotalWickets(playerTeamName));
+    }
+
     public void AwardTrophy()
     {
         profile.trophies++;
