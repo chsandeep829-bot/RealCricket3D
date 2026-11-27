@@ -2,68 +2,339 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-/// <summary>Interactive REAL CRICKET 3D dashboard for MEGHA BHAI GUILD GLORY.</summary>
+/// <summary>
+/// CRICNOVA 3D branded entrance and home menu. The existing match HUD, toss,
+/// scoring, batting, bowling and tournament controllers remain the gameplay source of truth.
+/// Add artwork at Resources/Branding/CricnovaSplash and CricnovaLogo (Texture2D).
+/// </summary>
 public sealed class CricketHomeScreen : MonoBehaviour
 {
-    const string HomeName="RealCricketHomeScreen", SetupName="MatchSetupMenu", ResultName="PostMatchResultPanel";
-    static readonly Color Navy=new Color(.012f,.035f,.08f,1), Blue=new Color(.025f,.16f,.30f,1), Gold=new Color(1f,.65f,.06f,1), Cyan=new Color(0,.72f,.95f,1);
-    static Font UiFont=>Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-    GameObject[] hud; GameObject setup,result,home; CricketMatchSetupController matchSetup;
+    private const string HomeName = "CricnovaHomeScreen";
+    private const string SplashName = "CricnovaStadiumEntrance";
+    private const string SetupName = "MatchSetupMenu";
+    private const string ResultName = "PostMatchResultPanel";
+
+    private static readonly Color Black = new Color(0.008f, 0.012f, 0.02f, 1f);
+    private static readonly Color Panel = new Color(0.025f, 0.035f, 0.052f, 0.98f);
+    private static readonly Color Gold = new Color(0.91f, 0.67f, 0.22f, 1f);
+    private static readonly Color BrightGold = new Color(1f, 0.82f, 0.39f, 1f);
+    private static Font UiFont => Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+
+    private GameObject[] gameplayHud;
+    private GameObject setupPanel;
+    private GameObject resultPanel;
+    private GameObject splashPanel;
+    private GameObject homePanel;
+    private CricketMatchSetupController matchSetup;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    static void Bootstrap(){Canvas c=Object.FindObjectOfType<Canvas>();if(c==null||c.name!="GameHUD"||c.transform.Find(HomeName)!=null)return;c.gameObject.AddComponent<CricketHomeScreen>().Build(c);}
-
-    void Build(Canvas canvas)
+    private static void Bootstrap()
     {
-        hud=new GameObject[canvas.transform.childCount];for(int i=0;i<hud.Length;i++){hud[i]=canvas.transform.GetChild(i).gameObject;hud[i].SetActive(false);}
-        setup=canvas.transform.Find(SetupName)?.gameObject;result=canvas.transform.Find(ResultName)?.gameObject;matchSetup=Object.FindObjectOfType<CricketMatchSetupController>();
-        if(setup!=null)setup.SetActive(false);if(result!=null)result.SetActive(false);
-        home=Panel(canvas.transform,HomeName,Navy,new Vector2(.5f,.5f),Vector2.one,Vector2.zero);home.transform.SetAsLastSibling();
-        Panel(home.transform,"GoldTopLine",Gold,new Vector2(.5f,.995f),new Vector2(1,.01f),Vector2.zero);
-        Panel(home.transform,"PitchGlow",new Color(.02f,.28f,.25f,1),new Vector2(.5f,.145f),new Vector2(1,.012f),Vector2.zero);
-        Image emblem=Picture(home.transform,"MEGHA_BHAI_RC3D_Logo",new Vector2(.075f,.88f),new Vector2(128,128),MakeEmblem());emblem.preserveAspect=true;
-        Label(home.transform,"MEGHA BHAI",new Vector2(.205f,.91f),new Vector2(330,50),34,Color.white,TextAnchor.MiddleLeft);
-        Label(home.transform,"GUILD GLORY  •  PRESENTS",new Vector2(.205f,.865f),new Vector2(390,40),21,Gold,TextAnchor.MiddleLeft);
-        Label(home.transform,"REAL CRICKET 3D",new Vector2(.52f,.89f),new Vector2(560,72),48,Color.white,TextAnchor.MiddleCenter);
-        Label(home.transform,"PLAY  •  COMPETE  •  WIN",new Vector2(.52f,.835f),new Vector2(500,36),22,Gold,TextAnchor.MiddleCenter);
-        Pill(home.transform,"COINS  12.6K  +",new Vector2(.82f,.92f),new Vector2(220,48));
-        Pill(home.transform,"LEVEL  1  •  XP  0/100",new Vector2(.94f,.86f),new Vector2(260,44));
-        Label(home.transform,"CHOOSE YOUR GAME",new Vector2(.205f,.765f),new Vector2(430,42),25,Cyan,TextAnchor.MiddleLeft);
-        string[] titles={"QUICK MATCH","TOURNAMENTS","RCPL LEAGUE","CAREER MODE","TEST MATCH","MULTIPLAYER"};
-        string[] subs={"Play instantly","Win the trophy","Premier cricket","Build your legacy","Five-day challenge","Play with friends"};
-        Color[] colors={new Color(.78f,.15f,.12f,1),Gold,new Color(.55f,.18f,.8f,1),new Color(.05f,.5f,.42f,1),new Color(.12f,.34f,.7f,1),Cyan};
-        float[] xx={.145f,.345f,.545f}, yy={.575f,.345f};
-        for(int i=0;i<6;i++){int n=i;Card(home.transform,titles[i],subs[i],new Vector2(xx[i%3],yy[i/3]),colors[i],MakeTile(i),i==1?(UnityAction)Tournament:Play);}
-        GameObject hero=Panel(home.transform,"SeasonFeature",new Color(.025f,.09f,.18f,1),new Vector2(.81f,.49f),new Vector2(.30f,.55f),Vector2.zero);
-        Panel(hero.transform,"GoldRule",Gold,new Vector2(.5f,.985f),new Vector2(1,.012f),Vector2.zero);
-        Image batter=Picture(hero.transform,"OriginalBatterArt",new Vector2(.5f,.65f),new Vector2(350,380),MakeBatter());batter.preserveAspect=true;
-        Label(hero.transform,"SEASON 01",new Vector2(.5f,.29f),new Vector2(400,42),24,Gold,TextAnchor.MiddleCenter);
-        Label(hero.transform,"CHAMPIONS CUP",new Vector2(.5f,.22f),new Vector2(450,60),34,Color.white,TextAnchor.MiddleCenter);
-        Label(hero.transform,"YOUR NEXT CRICKET STORY STARTS HERE",new Vector2(.5f,.15f),new Vector2(470,38),16,Color.white,TextAnchor.MiddleCenter);
-        ActionButton(hero.transform,"PLAY NOW",new Vector2(.5f,.075f),new Vector2(310,58),Gold,Play);
-        string[] offers={"★  DAILY REWARDS","♛  SUBSCRIPTION","✦  SUPER OFFERS","◆  STORE"};
-        for(int i=0;i<4;i++){int n=i;ActionButton(home.transform,offers[i],new Vector2(.965f,.70f-i*.125f),new Vector2(190,76),Blue,()=>{if(n==3)Play();});}
-        string[] nav={"HOME","MY TEAM","STATISTICS","STORE","SETTINGS"};float[] nx={.12f,.31f,.50f,.69f,.88f};
-        for(int i=0;i<nav.Length;i++){int n=i;ActionButton(home.transform,nav[i],new Vector2(nx[i],.075f),new Vector2(290,72),i==0?Gold:Blue,()=>{if(n==0)return;Play();});}
-        Label(home.transform,"MEGHA BHAI GUILD GLORY  •  CRICKET BEYOND LIMITS",new Vector2(.5f,.018f),new Vector2(900,26),15,new Color(.6f,.72f,.82f),TextAnchor.MiddleCenter);
+        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
+        if (canvas == null || canvas.name != "GameHUD") return;
+        if (canvas.transform.Find(HomeName) != null) return;
+        canvas.gameObject.AddComponent<CricketHomeScreen>().Build(canvas);
     }
 
-    void Play(){home.SetActive(false);Reveal();if(setup!=null)setup.SetActive(true);else if(matchSetup!=null)matchSetup.StartConfiguredMatch();}
-    void Tournament(){home.SetActive(false);Reveal();if(matchSetup!=null)matchSetup.CreateFourTeamTournamentAndStart();else Play();}
-    void Reveal(){foreach(GameObject g in hud)if(g!=null&&g!=setup&&g!=result)g.SetActive(true);if(result!=null)result.SetActive(false);}
+    private void Build(Canvas canvas)
+    {
+        gameplayHud = new GameObject[canvas.transform.childCount];
+        for (int i = 0; i < gameplayHud.Length; i++)
+        {
+            gameplayHud[i] = canvas.transform.GetChild(i).gameObject;
+            gameplayHud[i].SetActive(false);
+        }
 
-    static GameObject Panel(Transform p,string name,Color color,Vector2 a,Vector2 span,Vector2 size)
-    {GameObject g=new GameObject(name,typeof(RectTransform),typeof(Image));g.transform.SetParent(p,false);RectTransform r=g.GetComponent<RectTransform>();r.anchorMin=a-span*.5f;r.anchorMax=a+span*.5f;r.sizeDelta=size;g.GetComponent<Image>().color=color;return g;}
-    static Image Picture(Transform p,string name,Vector2 a,Vector2 size,Sprite s)
-    {GameObject g=new GameObject(name,typeof(RectTransform),typeof(Image));g.transform.SetParent(p,false);RectTransform r=g.GetComponent<RectTransform>();r.anchorMin=a;r.anchorMax=a;r.sizeDelta=size;Image im=g.GetComponent<Image>();im.sprite=s;im.raycastTarget=false;return im;}
-    static Text Label(Transform p,string value,Vector2 a,Vector2 size,int font,Color color,TextAnchor align)
-    {GameObject g=new GameObject("Text_"+value.Replace(" ",""),typeof(RectTransform),typeof(Text));g.transform.SetParent(p,false);RectTransform r=g.GetComponent<RectTransform>();r.anchorMin=a;r.anchorMax=a;r.sizeDelta=size;Text t=g.GetComponent<Text>();t.text=value;t.font=UiFont;t.fontSize=font;t.fontStyle=FontStyle.Bold;t.alignment=align;t.color=color;t.raycastTarget=false;return t;}
-    static void Pill(Transform p,string s,Vector2 a,Vector2 size){GameObject g=Panel(p,"StatusPill",Blue,a,new Vector2(size.x/1920,size.y/1080),size);Label(g.transform,s,new Vector2(.5f,.5f),size,18,Color.white,TextAnchor.MiddleCenter);}
-    static void ActionButton(Transform p,string s,Vector2 a,Vector2 size,Color c,UnityAction action)
-    {GameObject g=Panel(p,"Button_"+s.Replace(" ",""),c,a,new Vector2(size.x/1920,size.y/1080),size);RectTransform r=g.GetComponent<RectTransform>();r.anchorMin=a;r.anchorMax=a;r.sizeDelta=size;Button b=g.AddComponent<Button>();b.targetGraphic=g.GetComponent<Image>();b.onClick.AddListener(action);Label(g.transform,s,new Vector2(.5f,.5f),size,Mathf.Clamp((int)(size.y*.27f),16,27),Color.white,TextAnchor.MiddleCenter);}
-    static void Card(Transform p,string title,string sub,Vector2 a,Color accent,Sprite art,UnityAction action)
-    {GameObject g=Panel(p,"Mode_"+title.Replace(" ",""),new Color(.025f,.075f,.14f,1),a,new Vector2(350f/1920,205f/1080),new Vector2(350,205));RectTransform r=g.GetComponent<RectTransform>();r.anchorMin=a;r.anchorMax=a;r.sizeDelta=new Vector2(350,205);Panel(g.transform,"Accent",accent,new Vector2(.5f,.98f),new Vector2(1,.025f),Vector2.zero);Image im=Picture(g.transform,"OriginalArtwork",new Vector2(.78f,.5f),new Vector2(142,142),art);im.preserveAspect=true;Label(g.transform,title,new Vector2(.38f,.68f),new Vector2(240,44),23,Color.white,TextAnchor.MiddleLeft);Label(g.transform,sub,new Vector2(.38f,.40f),new Vector2(240,38),18,accent,TextAnchor.MiddleLeft);Button b=g.AddComponent<Button>();b.targetGraphic=g.GetComponent<Image>();b.onClick.AddListener(action);}
-    static Sprite MakeEmblem(){const int n=256;Texture2D t=new Texture2D(n,n,TextureFormat.RGBA32,false);Color clear=new Color(0,0,0,0),gold=new Color(1,.65f,.08f,1),navy=new Color(.015f,.07f,.15f,1),red=new Color(.8f,.08f,.1f,1),white=Color.white;for(int y=0;y<n;y++)for(int x=0;x<n;x++){float dx=x-128,dy=y-128,rad=Mathf.Sqrt(dx*dx+dy*dy);Color c=rad<118?navy:clear;if(rad>105&&rad<118)c=gold;if((x>90&&x<101||x>124&&x<135||x>157&&x<168)&&y>155&&y<224)c=gold;float ball=Mathf.Sqrt((x-128)*(x-128)+(y-105)*(y-105));if(ball<42)c=red;if(ball>37&&ball<42)c=white;if(Mathf.Abs((x-128)*.45f+(y-105)*.9f)<2&&ball<36)c=white;t.SetPixel(x,y,c);}t.Apply();return Sprite.Create(t,new Rect(0,0,n,n),new Vector2(.5f,.5f),100);}
-    static Sprite MakeTile(int type){const int n=160;Texture2D t=new Texture2D(n,n,TextureFormat.RGBA32,false);Color clear=new Color(0,0,0,0),gold=Gold,red=new Color(.9f,.1f,.1f,1),cyan=Cyan;for(int y=0;y<n;y++)for(int x=0;x<n;x++){float dx=x-80,dy=y-80,r=Mathf.Sqrt(dx*dx+dy*dy);Color c=clear;if(type==0&&r<54)c=red;if(type==0&&r>49&&r<54)c=Color.white;if(type==1&&r<60&&y>50)c=gold;if(type==2&&r<52&&y<120)c=cyan;if(type==3&&x>42&&x<118&&y>28&&y<130)c=cyan;if(type==4&&((x>52&&x<62)||(x>98&&x<108))&&y>25&&y<135)c=gold;if(type==5&&r<25)c=cyan;t.SetPixel(x,y,c);}t.Apply();return Sprite.Create(t,new Rect(0,0,n,n),new Vector2(.5f,.5f),100);}
-    static Sprite MakeBatter(){const int n=256;Texture2D t=new Texture2D(n,n,TextureFormat.RGBA32,false);Color clear=new Color(0,0,0,0),skin=new Color(.75f,.46f,.3f,1),kit=new Color(1,.28f,.025f,1),bat=new Color(.9f,.7f,.4f,1),dark=new Color(.015f,.04f,.09f,1);for(int y=0;y<n;y++)for(int x=0;x<n;x++){Color c=clear;float h=Mathf.Sqrt((x-130)*(x-130)+(y-205)*(y-205));if(h<29)c=skin;if(x>88&&x<176&&y>95&&y<176)c=kit;if(x>60&&x<120&&y>140&&y<165)c=skin;if(x>155&&x<205&&y>145&&y<165)c=skin;if(x>185&&x<210&&y>40&&y<230)c=bat;if(x>105&&x<165&&y>25&&y<90)c=dark;t.SetPixel(x,y,c);}t.Apply();return Sprite.Create(t,new Rect(0,0,n,n),new Vector2(.5f,.5f),100);}
+        setupPanel = canvas.transform.Find(SetupName)?.gameObject;
+        resultPanel = canvas.transform.Find(ResultName)?.gameObject;
+        matchSetup = Object.FindAnyObjectByType<CricketMatchSetupController>();
+        if (setupPanel != null) setupPanel.SetActive(false);
+        if (resultPanel != null) resultPanel.SetActive(false);
+
+        BuildDashboard(canvas.transform);
+        BuildStadiumEntrance(canvas.transform);
+    }
+
+    private void BuildStadiumEntrance(Transform parent)
+    {
+        splashPanel = MakePanel(parent, SplashName, Black, new Vector2(.5f, .5f),
+            Vector2.one, Vector2.zero);
+        splashPanel.transform.SetAsLastSibling();
+
+        Texture2D splashTexture = Resources.Load<Texture2D>("Branding/CricnovaSplash");
+        Sprite splashSprite = splashTexture != null ? Sprite.Create(
+            splashTexture, new Rect(0, 0, splashTexture.width, splashTexture.height),
+            new Vector2(.5f, .5f), 100f) : CreateFallbackStadiumArt();
+
+        Image backdrop = MakeImage(splashPanel.transform, "GoldenStadiumArtwork",
+            new Vector2(.5f, .5f), Vector2.zero, splashSprite);
+        RectTransform backdropRect = backdrop.rectTransform;
+        backdropRect.anchorMin = Vector2.zero;
+        backdropRect.anchorMax = Vector2.one;
+        backdropRect.offsetMin = Vector2.zero;
+        backdropRect.offsetMax = Vector2.zero;
+        backdrop.preserveAspect = true;
+
+        MakePanel(splashPanel.transform, "EntranceTint",
+            new Color(0.005f, 0.008f, 0.014f, .24f),
+            new Vector2(.5f, .5f), Vector2.one, Vector2.zero);
+
+        Texture2D logoTexture = Resources.Load<Texture2D>("Branding/CricnovaLogo");
+        Sprite logoSprite = logoTexture != null ? Sprite.Create(
+            logoTexture, new Rect(0, 0, logoTexture.width, logoTexture.height),
+            new Vector2(.5f, .5f), 100f) : CreateFallbackLogo();
+
+        Image logo = MakeImage(splashPanel.transform, "CRICNOVA_Golden_Shield_Logo",
+            new Vector2(.5f, .50f), new Vector2(760f, 500f), logoSprite);
+        logo.preserveAspect = true;
+
+        MakePanel(splashPanel.transform, "TopGoldLine", Gold,
+            new Vector2(.5f, .992f), new Vector2(1f, .008f), Vector2.zero);
+        MakePanel(splashPanel.transform, "BottomGoldLine", Gold,
+            new Vector2(.5f, .008f), new Vector2(1f, .008f), Vector2.zero);
+
+        MakeLabel(splashPanel.transform, "CRICNOVA STUDIOS",
+            new Vector2(.5f, .13f), new Vector2(650f, 52f), 27,
+            BrightGold, TextAnchor.MiddleCenter);
+        MakeLabel(splashPanel.transform, "THE ULTIMATE CRICKET EXPERIENCE",
+            new Vector2(.5f, .085f), new Vector2(900f, 42f), 19,
+            Color.white, TextAnchor.MiddleCenter);
+        MakeButton(splashPanel.transform, "ENTER CRICNOVA 3D",
+            new Vector2(.5f, .035f), new Vector2(360f, 64f),
+            Gold, EnterDashboard, 24);
+    }
+
+    private void BuildDashboard(Transform parent)
+    {
+        homePanel = MakePanel(parent, HomeName, Black,
+            new Vector2(.5f, .5f), Vector2.one, Vector2.zero);
+        homePanel.SetActive(false);
+
+        MakePanel(homePanel.transform, "GoldHeaderRule", Gold,
+            new Vector2(.5f, .985f), new Vector2(1f, .012f), Vector2.zero);
+        MakePanel(homePanel.transform, "GoldFooterRule", Gold,
+            new Vector2(.5f, .12f), new Vector2(1f, .004f), Vector2.zero);
+
+        Texture2D logoTexture = Resources.Load<Texture2D>("Branding/CricnovaLogo");
+        Sprite logoSprite = logoTexture != null ? Sprite.Create(
+            logoTexture, new Rect(0, 0, logoTexture.width, logoTexture.height),
+            new Vector2(.5f, .5f), 100f) : CreateFallbackLogo();
+
+        Image logo = MakeImage(homePanel.transform, "CricnovaHeaderLogo",
+            new Vector2(.12f, .86f), new Vector2(260f, 150f), logoSprite);
+        logo.preserveAspect = true;
+
+        MakeLabel(homePanel.transform, "CRICNOVA 3D",
+            new Vector2(.50f, .90f), new Vector2(700f, 70f), 48,
+            Color.white, TextAnchor.MiddleCenter);
+        MakeLabel(homePanel.transform, "CRICNOVA STUDIOS",
+            new Vector2(.50f, .845f), new Vector2(600f, 42f), 22,
+            BrightGold, TextAnchor.MiddleCenter);
+        MakeLabel(homePanel.transform, "SELECT YOUR MATCH",
+            new Vector2(.20f, .735f), new Vector2(520f, 48f), 26,
+            BrightGold, TextAnchor.MiddleLeft);
+
+        MakeGameModeCard(homePanel.transform, "QUICK MATCH",
+            "Choose teams • Toss • Play", new Vector2(.22f, .54f),
+            new Color(.16f, .105f, .035f, 1f), Play);
+        MakeGameModeCard(homePanel.transform, "TOURNAMENT",
+            "Four-team knockout cup", new Vector2(.22f, .32f),
+            new Color(.12f, .09f, .035f, 1f), StartTournament);
+        MakeGameModeCard(homePanel.transform, "PRACTICE",
+            "Enter match setup to train", new Vector2(.56f, .54f),
+            new Color(.055f, .075f, .085f, 1f), Play);
+        MakeGameModeCard(homePanel.transform, "CAREER",
+            "Local profile and match records", new Vector2(.56f, .32f),
+            new Color(.055f, .075f, .085f, 1f), Play);
+
+        MakeLabel(homePanel.transform, "BLACK • GOLD • CRICKET",
+            new Vector2(.80f, .76f), new Vector2(400f, 42f), 20,
+            BrightGold, TextAnchor.MiddleCenter);
+        MakeLabel(homePanel.transform, "PLAY  •  COMPETE  •  WIN",
+            new Vector2(.80f, .30f), new Vector2(450f, 54f), 27,
+            Gold, TextAnchor.MiddleCenter);
+        MakeButton(homePanel.transform, "BACK TO ENTRANCE",
+            new Vector2(.5f, .075f), new Vector2(300f, 56f),
+            new Color(.12f, .12f, .13f, 1f), ReturnToEntrance, 19);
+        MakeLabel(homePanel.transform, "© CRICNOVA STUDIOS",
+            new Vector2(.5f, .025f), new Vector2(500f, 28f), 14,
+            new Color(.66f, .62f, .52f, 1f), TextAnchor.MiddleCenter);
+    }
+
+    private void EnterDashboard()
+    {
+        if (splashPanel != null) splashPanel.SetActive(false);
+        if (homePanel != null) homePanel.SetActive(true);
+    }
+
+    private void ReturnToEntrance()
+    {
+        if (homePanel != null) homePanel.SetActive(false);
+        if (splashPanel != null) splashPanel.SetActive(true);
+    }
+
+    private void Play()
+    {
+        if (homePanel != null) homePanel.SetActive(false);
+        RevealGameplayHud();
+        if (setupPanel != null) setupPanel.SetActive(true);
+        else if (matchSetup != null) matchSetup.StartConfiguredMatch();
+    }
+
+    private void StartTournament()
+    {
+        if (homePanel != null) homePanel.SetActive(false);
+        RevealGameplayHud();
+        if (matchSetup != null) matchSetup.CreateFourTeamTournamentAndStart();
+        else if (setupPanel != null) setupPanel.SetActive(true);
+    }
+
+    private void RevealGameplayHud()
+    {
+        foreach (GameObject item in gameplayHud)
+            if (item != null && item != setupPanel && item != resultPanel)
+                item.SetActive(true);
+        if (resultPanel != null) resultPanel.SetActive(false);
+    }
+
+    private static void MakeGameModeCard(Transform parent, string title, string subtitle,
+        Vector2 anchor, Color background, UnityAction action)
+    {
+        GameObject card = MakePanel(parent, "Mode_" + title.Replace(" ", ""),
+            background, anchor, new Vector2(330f / 1920f, 185f / 1080f),
+            new Vector2(330f, 185f));
+        RectTransform rect = card.GetComponent<RectTransform>();
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.sizeDelta = new Vector2(560f, 170f);
+
+        MakePanel(card.transform, "GoldAccent", Gold,
+            new Vector2(.5f, .985f), new Vector2(1f, .025f), Vector2.zero);
+        MakeLabel(card.transform, title, new Vector2(.5f, .63f),
+            new Vector2(510f, 54f), 28, Color.white, TextAnchor.MiddleCenter);
+        MakeLabel(card.transform, subtitle, new Vector2(.5f, .31f),
+            new Vector2(510f, 42f), 18, BrightGold, TextAnchor.MiddleCenter);
+
+        Button button = card.AddComponent<Button>();
+        button.targetGraphic = card.GetComponent<Image>();
+        button.onClick.AddListener(action);
+    }
+
+    private static GameObject MakePanel(Transform parent, string name, Color color,
+        Vector2 anchor, Vector2 span, Vector2 size)
+    {
+        GameObject item = new GameObject(name, typeof(RectTransform), typeof(Image));
+        item.transform.SetParent(parent, false);
+        RectTransform rect = item.GetComponent<RectTransform>();
+        rect.anchorMin = anchor - span * .5f;
+        rect.anchorMax = anchor + span * .5f;
+        rect.sizeDelta = size;
+        item.GetComponent<Image>().color = color;
+        return item;
+    }
+
+    private static Image MakeImage(Transform parent, string name, Vector2 anchor,
+        Vector2 size, Sprite sprite)
+    {
+        GameObject item = new GameObject(name, typeof(RectTransform), typeof(Image));
+        item.transform.SetParent(parent, false);
+        RectTransform rect = item.GetComponent<RectTransform>();
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.sizeDelta = size;
+        Image image = item.GetComponent<Image>();
+        image.sprite = sprite;
+        image.color = Color.white;
+        image.raycastTarget = false;
+        return image;
+    }
+
+    private static Text MakeLabel(Transform parent, string value, Vector2 anchor,
+        Vector2 size, int fontSize, Color color, TextAnchor alignment)
+    {
+        GameObject item = new GameObject("Text_" + value.Replace(" ", ""),
+            typeof(RectTransform), typeof(Text));
+        item.transform.SetParent(parent, false);
+        RectTransform rect = item.GetComponent<RectTransform>();
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.sizeDelta = size;
+        Text text = item.GetComponent<Text>();
+        text.text = value;
+        text.font = UiFont;
+        text.fontSize = fontSize;
+        text.fontStyle = FontStyle.Bold;
+        text.alignment = alignment;
+        text.color = color;
+        text.raycastTarget = false;
+        return text;
+    }
+
+    private static void MakeButton(Transform parent, string title, Vector2 anchor,
+        Vector2 size, Color color, UnityAction action, int fontSize)
+    {
+        GameObject buttonObject = MakePanel(parent, "Button_" + title.Replace(" ", ""),
+            color, anchor, new Vector2(size.x / 1920f, size.y / 1080f), size);
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.sizeDelta = size;
+        Button button = buttonObject.AddComponent<Button>();
+        button.targetGraphic = buttonObject.GetComponent<Image>();
+        button.onClick.AddListener(action);
+        MakeLabel(buttonObject.transform, title, new Vector2(.5f, .5f),
+            new Vector2(size.x - 18f, size.y - 10f), fontSize,
+            Color.white, TextAnchor.MiddleCenter);
+    }
+
+    private static Sprite CreateFallbackLogo()
+    {
+        const int size = 256;
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        Color clear = new Color(0, 0, 0, 0);
+        Color gold = BrightGold;
+        Color black = Black;
+        for (int y = 0; y < size; y++)
+        for (int x = 0; x < size; x++)
+        {
+            float dx = x - 128f;
+            float dy = y - 128f;
+            float shield = Mathf.Abs(dx) * .65f + Mathf.Max(0f, dy) * .85f;
+            Color pixel = clear;
+            if (y > 24 && y < 226 && shield < 126f) pixel = gold;
+            if (y > 35 && y < 213 && shield < 112f) pixel = black;
+            if (y > 92 && y < 166 && x > 34 && x < 222) pixel = gold;
+            if (y > 101 && y < 157 && x > 43 && x < 213) pixel = black;
+            if (Mathf.Abs(x - 128) < 5 && y > 38 && y < 78) pixel = gold;
+            texture.SetPixel(x, y, pixel);
+        }
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0, 0, size, size),
+            new Vector2(.5f, .5f), 100f);
+    }
+
+    private static Sprite CreateFallbackStadiumArt()
+    {
+        const int size = 512;
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        Color night = new Color(.008f, .012f, .02f, 1f);
+        Color gold = new Color(.91f, .62f, .16f, 1f);
+        for (int y = 0; y < size; y++)
+        for (int x = 0; x < size; x++)
+        {
+            float dx = x - size * .5f;
+            float dy = y - size * .52f;
+            float ring = Mathf.Abs(Mathf.Sqrt(dx * dx + dy * dy) - 205f);
+            Color pixel = night;
+            if (ring < 3f && y < 365) pixel = gold;
+            if (y < 100 && Mathf.Abs(dx) < 220f) pixel = new Color(.035f, .055f, .065f, 1f);
+            if (y < 72 && x > 80 && x < 432) pixel = new Color(.10f, .075f, .035f, 1f);
+            bool light = ((x % 26) < 8 && (y % 28) < 8);
+            if (light && y > 145 && y < 340 && (x < 100 || x > 412)) pixel = BrightGold;
+            texture.SetPixel(x, y, pixel);
+        }
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0, 0, size, size),
+            new Vector2(.5f, .5f), 100f);
+    }
 }

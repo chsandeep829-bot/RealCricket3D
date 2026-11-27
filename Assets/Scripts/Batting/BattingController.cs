@@ -8,6 +8,7 @@ public class BattingController : MonoBehaviour
     [SerializeField] private Transform bat;
     [SerializeField] private Transform shotDirection;
     [SerializeField] private CricketPlayerAnimator playerAnimator;
+    [SerializeField] private ProceduralCricketPlayerMotion proceduralMotion;
 
     [Header("Swing")]
     [SerializeField, Min(0.05f)] private float swingDuration = 0.22f;
@@ -50,6 +51,7 @@ public class BattingController : MonoBehaviour
         isSwinging = true;
         swingProgress = 0f;
         if (playerAnimator != null) playerAnimator.PlayBat();
+        if (proceduralMotion != null) proceduralMotion.PlayBat();
         Quaternion target = restingRotation * Quaternion.Euler(swingRotation);
         float elapsed = 0f;
         float totalDuration = swingDuration * 2f;
@@ -77,7 +79,14 @@ public class BattingController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!isSwinging) return;
+        TryHitBall(collision);
+    }
+
+    // Also called by BatCollisionRelay on the bat's child collider. The batter
+    // root has no Rigidbody, so relying only on this root callback can miss bat contact.
+    public void TryHitBall(Collision collision)
+    {
+        if (!isSwinging || collision == null) return;
         CricketBall ball = collision.collider.GetComponentInParent<CricketBall>();
         if (ball == null || ball.HasBeenHit) return;
 

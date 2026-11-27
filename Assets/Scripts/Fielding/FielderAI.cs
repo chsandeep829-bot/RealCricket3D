@@ -14,8 +14,14 @@ public class FielderAI : MonoBehaviour
 
     private CricketBall targetBall;
     private bool collected;
+    private ProceduralCricketPlayerMotion playerMotion;
 
     public bool IsBusy => targetBall != null && !collected;
+
+    private void Awake()
+    {
+        playerMotion = GetComponent<ProceduralCricketPlayerMotion>();
+    }
 
     public void Chase(CricketBall ball)
     {
@@ -27,11 +33,16 @@ public class FielderAI : MonoBehaviour
     {
         targetBall = null;
         collected = false;
+        if (playerMotion != null) playerMotion.SetMovementSpeed(0f);
     }
 
     private void Update()
     {
-        if (targetBall == null || collected) return;
+        if (targetBall == null || collected)
+        {
+            if (playerMotion != null) playerMotion.SetMovementSpeed(0f);
+            return;
+        }
 
         Vector3 target = targetBall.transform.position;
         target.y = groundHeight;
@@ -48,12 +59,18 @@ public class FielderAI : MonoBehaviour
 
         if (delta.magnitude > pickupDistance)
         {
+            if (playerMotion != null) playerMotion.SetMovementSpeed(1f);
             transform.position = Vector3.MoveTowards(
                 transform.position, target, moveSpeed * Time.deltaTime);
             return;
         }
 
         collected = true;
+        if (playerMotion != null)
+        {
+            playerMotion.SetMovementSpeed(0f);
+            playerMotion.PlayCatch();
+        }
         onBallCollected?.Invoke();
     }
 }

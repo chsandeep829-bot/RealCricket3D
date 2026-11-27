@@ -76,11 +76,13 @@ public static class PrototypeSceneBuilder
         SetObjectReference(postMatch, "matchManager", match);
         SetObjectReference(postMatch, "careerSave", careerSave);
         SetObjectReference(postMatch, "tournament", tournament);
+        SetObjectReference(postMatch, "progression", progression);
 
         GameObject bowlingObject = new GameObject("BowlingController");
         BowlingController bowling = bowlingObject.AddComponent<BowlingController>();
         SetObjectReference(bowling, "ballPrefab", ballPrefab);
         SetObjectReference(bowling, "releasePoint", release.transform);
+        SetObjectReference(bowling, "playerMotion", bowler.GetComponent<ProceduralCricketPlayerMotion>());
 
         BowlingVariationController variations = bowlingObject.AddComponent<BowlingVariationController>();
         SetObjectReference(variations, "ballPrefab", ballPrefab);
@@ -90,6 +92,16 @@ public static class PrototypeSceneBuilder
         BattingController batting = batter.AddComponent<BattingController>();
         SetObjectReference(batting, "bat", bat);
         SetObjectReference(batting, "shotDirection", shotDirection);
+        SetObjectReference(batting, "proceduralMotion", batter.GetComponent<ProceduralCricketPlayerMotion>());
+
+        // The bat is a child collider, so give it a kinematic body and a relay
+        // that forwards contact to BattingController on the batter root.
+        Rigidbody batBody = bat.gameObject.AddComponent<Rigidbody>();
+        batBody.isKinematic = true;
+        batBody.useGravity = false;
+        batBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+        BatCollisionRelay batRelay = bat.gameObject.AddComponent<BatCollisionRelay>();
+        SetObjectReference(batRelay, "battingController", batting);
 
         ShotSelectionController shots = batter.AddComponent<ShotSelectionController>();
         SetObjectReference(shots, "battingController", batting);
@@ -275,12 +287,61 @@ public static class PrototypeSceneBuilder
 
     private static GameObject CreatePlayer(string name, Vector3 position, Color color)
     {
-        GameObject player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-        player.name = name;
+        GameObject player = new GameObject(name);
         player.transform.position = position + Vector3.up;
-        player.transform.localScale = new Vector3(0.65f, 1f, 0.65f);
-        player.GetComponent<Renderer>().sharedMaterial = MakeMaterial(name + "Material", color);
+
+        Material kit = MakeMaterial(name + "Material", color);
+        Material skin = MakeMaterial(name + "SkinMaterial", new Color(0.72f, 0.48f, 0.32f));
+        Material shoe = MakeMaterial(name + "ShoeMaterial", new Color(0.045f, 0.05f, 0.06f));
+
+        Transform torso = CreateAvatarPart(player.transform, "Torso", PrimitiveType.Capsule,
+            new Vector3(0f, 0.02f, 0f), new Vector3(0.48f, 0.43f, 0.30f), kit);
+        Transform head = CreateAvatarPart(player.transform, "Head", PrimitiveType.Sphere,
+            new Vector3(0f, 0.82f, 0f), new Vector3(0.24f, 0.27f, 0.24f), skin);
+        CreateAvatarPart(player.transform, "Helmet", PrimitiveType.Sphere,
+            new Vector3(0f, 0.98f, -0.015f), new Vector3(0.29f, 0.19f, 0.29f), kit);
+        CreateAvatarPart(player.transform, "HelmetKitTrim", PrimitiveType.Cube,
+            new Vector3(0f, 0.91f, 0.245f), new Vector3(0.34f, 0.035f, 0.035f),
+            MakeMaterial(name + "AccentMaterial", new Color(0.95f, 0.68f, 0.12f)));
+        Transform leftArm = CreateAvatarLimb(player.transform, "LeftArm",
+            new Vector3(-0.34f, 0.28f, 0f), kit);
+        Transform rightArm = CreateAvatarLimb(player.transform, "RightArm",
+            new Vector3(0.34f, 0.28f, 0f), kit);
+        Transform leftLeg = CreateAvatarLimb(player.transform, "LeftLeg",
+            new Vector3(-0.16f, -0.38f, 0f), shoe);
+        Transform rightLeg = CreateAvatarLimb(player.transform, "RightLeg",
+            new Vector3(0.16f, -0.38f, 0f), shoe);
+
+        ProceduralCricketPlayerMotion motion = player.AddComponent<ProceduralCricketPlayerMotion>();
+        motion.Configure(torso, head, leftArm, rightArm, leftLeg, rightLeg);
+        CricketPlayerKit playerKit = player.AddComponent<CricketPlayerKit>();
+        playerKit.ApplyTeamColors(color, new Color(0.95f, 0.68f, 0.12f));
         return player;
+    }
+
+    private static Transform CreateAvatarPart(Transform parent, string name, PrimitiveType type,
+        Vector3 localPosition, Vector3 localScale, Material material)
+    {
+        GameObject part = GameObject.CreatePrimitive(type);
+        part.name = name;
+        part.transform.SetParent(parent, false);
+        part.transform.localPosition = localPosition;
+        part.transform.localScale = localScale;
+        part.GetComponent<Renderer>().sharedMaterial = material;
+        Collider collider = part.GetComponent<Collider>();
+        if (collider != null) Object.DestroyImmediate(collider);
+        return part.transform;
+    }
+
+    private static Transform CreateAvatarLimb(Transform parent, string name,
+        Vector3 pivotPosition, Material material)
+    {
+        GameObject pivot = new GameObject(name);
+        pivot.transform.SetParent(parent, false);
+        pivot.transform.localPosition = pivotPosition;
+        CreateAvatarPart(pivot.transform, name + "Mesh", PrimitiveType.Capsule,
+            new Vector3(0f, -0.28f, 0f), new Vector3(0.115f, 0.28f, 0.115f), material);
+        return pivot.transform;
     }
 
     private static Transform CreateBat(Transform parent)
@@ -419,7 +480,7 @@ public static class PrototypeSceneBuilder
         panelRect.offsetMax = Vector2.zero;
         panel.GetComponent<Image>().color = new Color(0.025f, 0.055f, 0.10f, 0.97f);
 
-        CreateMenuText(panel.transform, "REALCRICKET3D  |  MATCH SETUP",
+        CreateMenuText(panel.transform, "CRICNOVA 3D  |  MATCH SETUP",
             new Vector2(0.5f, 0.88f), new Vector2(780f, 70f), 38);
 
         Text status = CreateMenuText(panel.transform, "INDIA vs AUSTRALIA",
@@ -554,9 +615,12 @@ public static class PrototypeSceneBuilder
         textRect.offsetMax = Vector2.zero;
         Text text = textObject.GetComponent<Text>();
         text.text = label;
+        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.alignment = TextAnchor.MiddleCenter;
         text.fontSize = 28;
+        text.fontStyle = FontStyle.Bold;
         text.color = Color.white;
+        text.raycastTarget = false;
     }
 
     private static void CreateRunOutZone(Vector3 position, MatchManager match,

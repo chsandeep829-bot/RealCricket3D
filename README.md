@@ -1,4 +1,4 @@
-# REAL CRICKET 3D
+# CRICNOVA 3D
 
 An original Unity 6 offline-first cricket simulation project for Android.
 
@@ -8,7 +8,7 @@ An original Unity 6 offline-first cricket simulation project for Android.
 - Primary target: Android (ARM64)
 - UI dependency: Unity UI (uGUI)
 - Open the repository folder in Unity Hub and allow the Editor to finish importing and compiling.
-- Use **RealCricket3D → Build Prototype Scene** to regenerate the current greybox gameplay scene. This replaces the generated scene, so back up manual scene edits first.
+- Use **CRICNOVA 3D → Build Prototype Scene** to regenerate the current greybox gameplay scene. This replaces the generated scene, so back up manual scene edits first.
 
 ## Android APK from GitHub Actions
 

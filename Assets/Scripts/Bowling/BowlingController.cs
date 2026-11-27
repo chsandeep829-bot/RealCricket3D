@@ -7,6 +7,7 @@ public class BowlingController : MonoBehaviour
     [SerializeField] private Transform releasePoint;
     [SerializeField, Min(1f)] private float deliverySpeed = 25f;
     [SerializeField] private Vector3 deliveryDirection = Vector3.forward;
+    [SerializeField] private ProceduralCricketPlayerMotion playerMotion;
 
     private void Update()
     {
@@ -23,6 +24,7 @@ public class BowlingController : MonoBehaviour
             return;
         }
 
+        if (playerMotion != null) playerMotion.PlayBowl();
         CricketBall ball = Instantiate(ballPrefab, releasePoint.position, releasePoint.rotation);
         Vector3 direction = releasePoint.TransformDirection(deliveryDirection.normalized);
         ball.Bowl(direction * deliverySpeed);

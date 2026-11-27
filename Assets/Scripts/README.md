@@ -16,6 +16,7 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 - `Gameplay/CricketCameraFollow.cs`: smooth camera follow for a selected player.
 - `Gameplay/RunningBetweenWicketsController.cs`: queues one/two-run requests and animates batters between crease markers.
 - `Gameplay/CricketPlayerAnimator.cs`: sends movement and action parameters/triggers to an assigned Animator Controller; actual animation clips and controller must be supplied separately.
+- `Gameplay/CricketPlayerKit.cs`: applies primary team colours to generated jersey parts and accent colours to helmet/trim using MaterialPropertyBlock, preserving skin and footwear materials.
 - `Gameplay/CricketMatchPauseController.cs`: pauses and resumes match time.
 - Fielding scripts provide basic fielder chase, catch, throw, run-out and stumping prototypes.
 - `Bowling/BowlingController.cs`: creates and releases a basic delivery.
