@@ -128,9 +128,20 @@ public static class RealCricketAndroidBuild
             throw new System.Exception("Unity Android Adaptive icon slots are unavailable.");
 
         // Android adaptive icon layers are background first, foreground second.
-        // The supplied shield image remains the foreground artwork.
+        // Use the exact layer count Unity reports for each slot (some versions
+        // expose an optional monochrome layer as well).
         foreach (PlatformIcon slot in slots)
-            slot.SetTextures(new[] { background, logo });
+        {
+            Texture2D[] layers = new Texture2D[slot.maxLayerCount];
+            if (layers.Length < 2)
+                throw new System.Exception("Android adaptive icon slot does not expose background and foreground layers.");
+
+            layers[0] = background;
+            layers[1] = logo;
+            for (int layer = 2; layer < layers.Length; layer++)
+                layers[layer] = logo;
+            slot.SetTextures(layers);
+        }
 
         PlayerSettings.SetPlatformIcons(
             NamedBuildTarget.Android, AndroidPlatformIconKind.Adaptive, slots);
