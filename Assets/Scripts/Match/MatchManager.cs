@@ -55,6 +55,29 @@ public class MatchManager : MonoBehaviour
     public int MaxOvers => maxOvers;
     public string BattingTeamName => (inningsNumber == 1 || inningsNumber == 3) ? teamAName : teamBName;
     public string BowlingTeamName => (inningsNumber == 1 || inningsNumber == 3) ? teamBName : teamAName;
+    public string TeamAName => teamAName;
+    public string TeamBName => teamBName;
+    public string MatchResultText => GetResultText();
+    public int GetTeamTotalRuns(string teamName)
+    {
+        if (string.IsNullOrWhiteSpace(teamName)) return 0;
+        bool isTeamA = string.Equals(teamName.Trim(), teamAName, StringComparison.OrdinalIgnoreCase);
+        bool isTeamB = string.Equals(teamName.Trim(), teamBName, StringComparison.OrdinalIgnoreCase);
+        if (!isTeamA && !isTeamB) return 0;
+        return isTeamA
+            ? inningsRuns[0] + (format == CricketMatchFormat.Test ? inningsRuns[2] : 0)
+            : inningsRuns[1] + (format == CricketMatchFormat.Test ? inningsRuns[3] : 0);
+    }
+    public int GetTeamTotalWickets(string teamName)
+    {
+        if (string.IsNullOrWhiteSpace(teamName)) return 0;
+        bool isTeamA = string.Equals(teamName.Trim(), teamAName, StringComparison.OrdinalIgnoreCase);
+        bool isTeamB = string.Equals(teamName.Trim(), teamBName, StringComparison.OrdinalIgnoreCase);
+        if (!isTeamA && !isTeamB) return 0;
+        return isTeamA
+            ? inningsWickets[0] + (format == CricketMatchFormat.Test ? inningsWickets[2] : 0)
+            : inningsWickets[1] + (format == CricketMatchFormat.Test ? inningsWickets[3] : 0);
+    }
     public int InningsCount => format == CricketMatchFormat.Test ? 4 : 2;
 
     private void Start()
