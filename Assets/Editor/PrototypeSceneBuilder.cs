@@ -262,7 +262,7 @@ public static class PrototypeSceneBuilder
         Button button = buttonObject.GetComponent<Button>();
         button.onClick.AddListener(action);
 
-        GameObject textObject = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+        GameObject textObject = new GameObject("Label", typeof(RectTransform), typeof(Text));
         textObject.transform.SetParent(buttonObject.transform, false);
         RectTransform textRect = textObject.GetComponent<RectTransform>();
         textRect.anchorMin = Vector2.zero;
