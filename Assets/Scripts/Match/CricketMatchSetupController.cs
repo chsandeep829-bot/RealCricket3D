@@ -23,11 +23,14 @@ public class CricketMatchSetupController : MonoBehaviour
     public int SecondTeamIndex => secondTeamIndex;
     public CricketMatchFormat SelectedFormat => selectedFormat;
     public bool IsTossReady => tossWinnerIndex >= 0;
+    public bool CanStartMatch => matchManager != null && HasValidSetup();
+    public bool CanStartTournament => matchManager != null && tournamentManager != null && availableTeams != null && availableTeams.Length >= 4;
 
     public void SelectFirstTeam(int index)
     {
         if (!ValidTeamIndex(index) || index == secondTeamIndex) return;
         firstTeamIndex = index;
+        ResetToss();
         UpdateStatus();
     }
 
@@ -35,6 +38,7 @@ public class CricketMatchSetupController : MonoBehaviour
     {
         if (!ValidTeamIndex(index) || index == firstTeamIndex) return;
         secondTeamIndex = index;
+        ResetToss();
         UpdateStatus();
     }
 
@@ -66,9 +70,9 @@ public class CricketMatchSetupController : MonoBehaviour
         }
     }
 
-    public void SelectT20() => selectedFormat = CricketMatchFormat.T20;
-    public void SelectODI() => selectedFormat = CricketMatchFormat.ODI;
-    public void SelectTest() => selectedFormat = CricketMatchFormat.Test;
+    public void SelectT20() { selectedFormat = CricketMatchFormat.T20; ResetToss(); UpdateStatus(); }
+    public void SelectODI() { selectedFormat = CricketMatchFormat.ODI; ResetToss(); UpdateStatus(); }
+    public void SelectTest() { selectedFormat = CricketMatchFormat.Test; ResetToss(); UpdateStatus(); }
 
     public void PerformToss()
     {
@@ -131,12 +135,13 @@ public class CricketMatchSetupController : MonoBehaviour
         if (setupStatus != null) setupStatus.text = teamA + " batting first — " + selectedFormat;
     }
 
+    private void ResetToss() { tossWinnerIndex = -1; tossWinnerBatsFirst = false; }
     private bool ValidTeamIndex(int index) => availableTeams != null && index >= 0 && index < availableTeams.Length;
     private bool HasValidSetup() => ValidTeamIndex(firstTeamIndex) && ValidTeamIndex(secondTeamIndex) && firstTeamIndex != secondTeamIndex;
     private string TeamName(int index) => ValidTeamIndex(index) ? availableTeams[index] : "TEAM";
     private void UpdateStatus()
     {
-        if (setupStatus != null) setupStatus.text = TeamName(firstTeamIndex) + " vs " + TeamName(secondTeamIndex);
+        if (setupStatus != null) setupStatus.text = TeamName(firstTeamIndex) + " vs " + TeamName(secondTeamIndex) + "  •  " + selectedFormat.ToString().ToUpperInvariant();
     }
     private static void Swap(ref string a, ref string b) { string temp = a; a = b; b = temp; }
 }

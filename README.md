@@ -1,6 +1,6 @@
 # REAL CRICKET 3D
 
-An original Unity 6 offline-first cricket simulation project for Android.
+An original Unity 6 offline-first cricket simulation project for Android, built under the REAL CRICKET 3D identity.
 
 ## Open the Unity project
 
@@ -12,7 +12,13 @@ An original Unity 6 offline-first cricket simulation project for Android.
 
 ## Android APK from GitHub Actions
 
-See [Docs/ANDROID_BUILD.md](Docs/ANDROID_BUILD.md) for the one-time Unity license secret setup and APK download steps. The workflow is `.github/workflows/android-apk.yml`; run it from the repository's **Actions** tab.
+See [Docs/ANDROID_BUILD.md](Docs/ANDROID_BUILD.md) for the one-time Unity license secret setup and APK download steps. See [Docs/UI_GAMEPLAY_POLISH.md](Docs/UI_GAMEPLAY_POLISH.md) for the latest UI changes and Unity playtest checklist. The workflow is `.github/workflows/android-apk.yml`; run it from the repository's **Actions** tab.
+
+## Branding
+
+- Game title: **REAL CRICKET 3D**
+- Studio label: **REAL CRICKET STUDIOS**
+- Visual direction: midnight navy, black and gold accents
 
 ## Project status
 
