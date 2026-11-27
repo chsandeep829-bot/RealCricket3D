@@ -5,10 +5,10 @@ using UnityEngine.Events;
 /// <summary>Interactive home dashboard for REAL CRICKET 3D.</summary>
 public sealed class CricketHomeScreen : MonoBehaviour
 {
-    const string HomeName="RealCricketHomeScreen", SetupName="MatchSetupMenu", ResultName="PostMatchResultPanel";
+    const string HomeName="RealCricketHomeScreen", SetupName="MatchSetupMenu", PauseName="PauseMenu", ResultName="PostMatchResultPanel";
     static readonly Color Navy=new Color(.008f,.009f,.012f,1), Blue=new Color(.055f,.058f,.065f,1), Gold=new Color(.83f,.69f,.22f,1), Cyan=new Color(1f,.84f,.46f,1);
     static Font UiFont=>Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-    GameObject[] hud; GameObject setup,result,home; CricketMatchSetupController matchSetup;
+    GameObject[] hud; GameObject setup,pause,result,home; CricketMatchSetupController matchSetup;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Bootstrap(){Canvas c=Object.FindObjectOfType<Canvas>();if(c==null||c.name!="GameHUD"||c.transform.Find(HomeName)!=null)return;c.gameObject.AddComponent<CricketHomeScreen>().Build(c);}
@@ -16,8 +16,8 @@ public sealed class CricketHomeScreen : MonoBehaviour
     void Build(Canvas canvas)
     {
         hud=new GameObject[canvas.transform.childCount];for(int i=0;i<hud.Length;i++){hud[i]=canvas.transform.GetChild(i).gameObject;hud[i].SetActive(false);}
-        setup=canvas.transform.Find(SetupName)?.gameObject;result=canvas.transform.Find(ResultName)?.gameObject;matchSetup=Object.FindObjectOfType<CricketMatchSetupController>();
-        if(setup!=null)setup.SetActive(false);if(result!=null)result.SetActive(false);
+        setup=canvas.transform.Find(SetupName)?.gameObject;pause=canvas.transform.Find(PauseName)?.gameObject;result=canvas.transform.Find(ResultName)?.gameObject;matchSetup=Object.FindObjectOfType<CricketMatchSetupController>();
+        if(setup!=null)setup.SetActive(false);if(pause!=null)pause.SetActive(false);if(result!=null)result.SetActive(false);
         home=Panel(canvas.transform,HomeName,Navy,new Vector2(.5f,.5f),Vector2.one,Vector2.zero);home.transform.SetAsLastSibling();
         Panel(home.transform,"GoldTopLine",Gold,new Vector2(.5f,.995f),new Vector2(1,.01f),Vector2.zero);
         Panel(home.transform,"PitchGlow",new Color(.02f,.28f,.25f,1),new Vector2(.5f,.145f),new Vector2(1,.012f),Vector2.zero);
@@ -51,7 +51,7 @@ public sealed class CricketHomeScreen : MonoBehaviour
     void Play(){home.SetActive(false);Reveal();if(setup!=null)setup.SetActive(true);else if(matchSetup!=null)matchSetup.StartConfiguredMatch();}
     void Tournament(){home.SetActive(false);Reveal();if(matchSetup!=null&&matchSetup.CanStartTournament)matchSetup.CreateFourTeamTournamentAndStart();else if(setup!=null)setup.SetActive(true);}
     void TestMatch(){Play();if(matchSetup!=null)matchSetup.SelectTest();}
-    void Reveal(){foreach(GameObject g in hud)if(g!=null&&g!=setup&&g!=result)g.SetActive(true);if(result!=null)result.SetActive(false);}
+    void Reveal(){foreach(GameObject g in hud)if(g!=null&&g!=setup&&g!=pause&&g!=result)g.SetActive(true);if(result!=null)result.SetActive(false);}
 
     static GameObject Panel(Transform p,string name,Color color,Vector2 a,Vector2 span,Vector2 size)
     {GameObject g=new GameObject(name,typeof(RectTransform),typeof(Image));g.transform.SetParent(p,false);RectTransform r=g.GetComponent<RectTransform>();r.anchorMin=a-span*.5f;r.anchorMax=a+span*.5f;r.sizeDelta=size;g.GetComponent<Image>().color=color;return g;}
