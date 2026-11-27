@@ -23,6 +23,13 @@ public class CricketMatchProgressionBridge : MonoBehaviour
 
     private void Update()
     {
+        ProcessCompletedMatch();
+    }
+
+    // Public and idempotent so the result screen can force progression to be
+    // saved before it renders the career totals and tournament status.
+    public void ProcessCompletedMatch()
+    {
         if (matchManager == null) return;
 
         // Keep the default player side aligned if the match setup changes Team A.
