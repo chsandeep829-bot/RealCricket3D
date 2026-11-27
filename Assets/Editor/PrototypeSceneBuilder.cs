@@ -93,6 +93,15 @@ public static class PrototypeSceneBuilder
         SetObjectReference(batting, "shotDirection", shotDirection);
         SetObjectReference(batting, "proceduralMotion", batter.GetComponent<ProceduralCricketPlayerMotion>());
 
+        // The bat is a child collider, so give it a kinematic body and a relay
+        // that forwards contact to BattingController on the batter root.
+        Rigidbody batBody = bat.gameObject.AddComponent<Rigidbody>();
+        batBody.isKinematic = true;
+        batBody.useGravity = false;
+        batBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+        BatCollisionRelay batRelay = bat.gameObject.AddComponent<BatCollisionRelay>();
+        SetObjectReference(batRelay, "battingController", batting);
+
         ShotSelectionController shots = batter.AddComponent<ShotSelectionController>();
         SetObjectReference(shots, "battingController", batting);
         SetObjectReference(shots, "shotDirection", shotDirection);
