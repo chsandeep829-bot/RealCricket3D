@@ -321,7 +321,21 @@ public class MatchManager : MonoBehaviour
         if (scoreText == null) return;
 
         string oversText = Overs + "." + BallsInOver;
-        string targetText = target > 0 ? "\\nTARGET  " + target : string.Empty;
+        float completedOvers = legalBalls / 6f;
+        float currentRunRate = completedOvers > 0f ? runs / completedOvers : 0f;
+        string targetText = string.Empty;
+
+        if (target > 0)
+        {
+            int ballsRemaining = Mathf.Max(0, maxOvers * 6 - legalBalls);
+            float requiredRunRate = ballsRemaining > 0
+                ? Mathf.Max(0, target - runs) / (ballsRemaining / 6f)
+                : 0f;
+            targetText = "\\nTARGET  " + target +
+                "   NEED  " + Mathf.Max(0, target - runs) +
+                "   RRR  " + requiredRunRate.ToString("0.00");
+        }
+
         string statusText = matchCompleted ? "\\n" + GetResultText() :
             inningsCompleted ? "\\nINNINGS COMPLETE" : string.Empty;
 
@@ -329,6 +343,7 @@ public class MatchManager : MonoBehaviour
             BattingTeamName + "  " + runs + "/" + wickets +
             "\\nINNINGS  " + inningsNumber + "/" + InningsCount +
             "\\nOVERS  " + oversText + " / " + maxOvers +
+            "   CRR  " + currentRunRate.ToString("0.00") +
             "\\nSTRIKER END  " + (strikerAtBowlerEnd ? "BOWLER END" : "SCORE END") +
             targetText + statusText;
     }
