@@ -1,4 +1,4 @@
-name: Build RealCricket3D Android APK
+name: Build RealCricket3D Signed Release APK
 
 on:
   workflow_dispatch:
@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   build-android:
-    name: Build Android APK
+    name: Build Signed Android Release APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,7 +24,7 @@ jobs:
         with:
           lfs: true
 
-      - name: Build with Unity
+      - name: Build and sign with Unity
         uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -38,11 +38,16 @@ jobs:
           buildMethod: RealCricketAndroidBuild.BuildAndroid
           allowDirtyBuild: true
           customParameters: -quit
+          androidKeystoreName: user.keystore
+          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          androidKeyaliasName: ${{ secrets.ANDROID_KEY_ALIAS }}
+          androidKeyaliasPass: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
-      - name: Upload APK
+      - name: Upload signed Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: RealCricket3D-Android-APK
+          name: RealCricket3D-release-apk
           path: Builds/Android/RealCricket3D.apk
           if-no-files-found: error
           retention-days: 14
