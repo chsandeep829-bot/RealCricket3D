@@ -11,6 +11,7 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 - **Career saves:** `Match/CricketCareerSaveSystem.cs` stores a local player profile and basic match statistics in PlayerPrefs. This is device-local persistence, not cloud sync.
 - **Tournament bracket:** `Match/CricketTournamentManager.cs` manages a four-team knockout bracket and stores progress locally. Call `CreateTournament`, then `RecordCurrentMatchWinner` after each completed match.
 - **Match progression bridge:** `Match/CricketMatchProgressionBridge.cs` is now added automatically by the prototype scene builder. It records completed match statistics into the local career profile and passes match winners to an active tournament. The prototype treats Team A as the player's team; a future menu can call `SetPlayerTeamName` to choose another side.
+- **Post-match and tournament UI:** `Match/CricketPostMatchMenuController.cs` displays the match result and saved career summary, and can launch the next knockout fixture. The generated setup menu also has a `START 4-TEAM CUP` action that creates the default four-team bracket and starts its opening T20 fixture.
 - `Gameplay/CricketBall.cs`: Rigidbody-based ball state and velocity.
 - `Gameplay/CricketCameraFollow.cs`: smooth camera follow for a selected player.
 - `Gameplay/RunningBetweenWicketsController.cs`: queues one/two-run requests and animates batters between crease markers.
