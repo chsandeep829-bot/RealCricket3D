@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-/// <summary>Interactive REAL CRICKET 3D dashboard for MEGHA BHAI GUILD GLORY.</summary>
+/// <summary>Interactive home dashboard for REAL CRICKET 3D.</summary>
 public sealed class CricketHomeScreen : MonoBehaviour
 {
     const string HomeName="RealCricketHomeScreen", SetupName="MatchSetupMenu", ResultName="PostMatchResultPanel";
@@ -21,13 +21,13 @@ public sealed class CricketHomeScreen : MonoBehaviour
         home=Panel(canvas.transform,HomeName,Navy,new Vector2(.5f,.5f),Vector2.one,Vector2.zero);home.transform.SetAsLastSibling();
         Panel(home.transform,"GoldTopLine",Gold,new Vector2(.5f,.995f),new Vector2(1,.01f),Vector2.zero);
         Panel(home.transform,"PitchGlow",new Color(.02f,.28f,.25f,1),new Vector2(.5f,.145f),new Vector2(1,.012f),Vector2.zero);
-        Image emblem=Picture(home.transform,"MEGHA_BHAI_RC3D_Logo",new Vector2(.075f,.88f),new Vector2(128,128),MakeEmblem());emblem.preserveAspect=true;
-        Label(home.transform,"MEGHA BHAI",new Vector2(.205f,.91f),new Vector2(330,50),34,Color.white,TextAnchor.MiddleLeft);
-        Label(home.transform,"GUILD GLORY  •  PRESENTS",new Vector2(.205f,.865f),new Vector2(390,40),21,Gold,TextAnchor.MiddleLeft);
+        Image emblem=Picture(home.transform,"REAL_CRICKET_3D_Logo",new Vector2(.075f,.88f),new Vector2(128,128),MakeEmblem());emblem.preserveAspect=true;
+        Label(home.transform,"REAL CRICKET",new Vector2(.205f,.91f),new Vector2(390,50),34,Color.white,TextAnchor.MiddleLeft);
+        Label(home.transform,"3D  •  CRICKET BEYOND LIMITS",new Vector2(.205f,.865f),new Vector2(430,40),21,Gold,TextAnchor.MiddleLeft);
         Label(home.transform,"REAL CRICKET 3D",new Vector2(.52f,.89f),new Vector2(560,72),48,Color.white,TextAnchor.MiddleCenter);
         Label(home.transform,"PLAY  •  COMPETE  •  WIN",new Vector2(.52f,.835f),new Vector2(500,36),22,Gold,TextAnchor.MiddleCenter);
-        Pill(home.transform,"COINS  12.6K  +",new Vector2(.82f,.92f),new Vector2(220,48));
-        Pill(home.transform,"LEVEL  1  •  XP  0/100",new Vector2(.94f,.86f),new Vector2(260,44));
+        Pill(home.transform,"OFFLINE MATCH MODE",new Vector2(.82f,.92f),new Vector2(250,48));
+        Pill(home.transform,"BUILD  0.1.0",new Vector2(.94f,.86f),new Vector2(220,44));
         Label(home.transform,"CHOOSE YOUR GAME",new Vector2(.205f,.765f),new Vector2(430,42),25,Cyan,TextAnchor.MiddleLeft);
         string[] titles={"QUICK MATCH","TOURNAMENTS","RCPL LEAGUE","CAREER MODE","TEST MATCH","MULTIPLAYER"};
         string[] subs={"Play instantly","Win the trophy","Premier cricket","Build your legacy","Five-day challenge","Play with friends"};
@@ -45,11 +45,11 @@ public sealed class CricketHomeScreen : MonoBehaviour
         for(int i=0;i<4;i++){int n=i;ActionButton(home.transform,offers[i],new Vector2(.965f,.70f-i*.125f),new Vector2(190,76),Blue,()=>{if(n==3)Play();});}
         string[] nav={"HOME","MY TEAM","STATISTICS","STORE","SETTINGS"};float[] nx={.12f,.31f,.50f,.69f,.88f};
         for(int i=0;i<nav.Length;i++){int n=i;ActionButton(home.transform,nav[i],new Vector2(nx[i],.075f),new Vector2(290,72),i==0?Gold:Blue,()=>{if(n==0)return;Play();});}
-        Label(home.transform,"MEGHA BHAI GUILD GLORY  •  CRICKET BEYOND LIMITS",new Vector2(.5f,.018f),new Vector2(900,26),15,new Color(.6f,.72f,.82f),TextAnchor.MiddleCenter);
+        Label(home.transform,"REAL CRICKET STUDIOS  •  CRICKET BEYOND LIMITS",new Vector2(.5f,.018f),new Vector2(900,26),15,new Color(.6f,.72f,.82f),TextAnchor.MiddleCenter);
     }
 
     void Play(){home.SetActive(false);Reveal();if(setup!=null)setup.SetActive(true);else if(matchSetup!=null)matchSetup.StartConfiguredMatch();}
-    void Tournament(){home.SetActive(false);Reveal();if(matchSetup!=null)matchSetup.CreateFourTeamTournamentAndStart();else Play();}
+    void Tournament(){home.SetActive(false);Reveal();if(matchSetup!=null&&matchSetup.CanStartTournament)matchSetup.CreateFourTeamTournamentAndStart();else if(setup!=null)setup.SetActive(true);}
     void Reveal(){foreach(GameObject g in hud)if(g!=null&&g!=setup&&g!=result)g.SetActive(true);if(result!=null)result.SetActive(false);}
 
     static GameObject Panel(Transform p,string name,Color color,Vector2 a,Vector2 span,Vector2 size)
