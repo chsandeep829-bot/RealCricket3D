@@ -15,6 +15,8 @@ public class FielderAI : MonoBehaviour
     private CricketBall targetBall;
     private bool collected;
 
+    public bool IsBusy => targetBall != null && !collected;
+
     public void Chase(CricketBall ball)
     {
         targetBall = ball;
