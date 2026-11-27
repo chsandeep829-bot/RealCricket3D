@@ -31,6 +31,7 @@ public static class PrototypeSceneBuilder
         GameObject batter = CreatePlayer("Batter", new Vector3(0f, 0f, -3.8f), Color.blue);
         GameObject bowler = CreatePlayer("Bowler", new Vector3(0f, 0f, 7.8f), Color.red);
         bowler.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+        GameObject nonStriker = CreatePlayer("NonStriker", new Vector3(0f, 0f, 4.8f), new Color(0.15f, 0.35f, 0.85f));
 
         Transform bat = CreateBat(batter.transform);
         Transform shotDirection = new GameObject("ShotDirection").transform;
@@ -50,6 +51,11 @@ public static class PrototypeSceneBuilder
         BowlingController bowling = bowlingObject.AddComponent<BowlingController>();
         SetObjectReference(bowling, "ballPrefab", ballPrefab);
         SetObjectReference(bowling, "releasePoint", release.transform);
+
+        BowlingVariationController variations = bowlingObject.AddComponent<BowlingVariationController>();
+        SetObjectReference(variations, "ballPrefab", ballPrefab);
+        SetObjectReference(variations, "releasePoint", release.transform);
+        ConfigureBowlingProfiles(variations);
 
         BattingController batting = batter.AddComponent<BattingController>();
         SetObjectReference(batting, "bat", bat);
@@ -75,7 +81,13 @@ public static class PrototypeSceneBuilder
         SetObjectReference(follow, "target", batter.transform);
 
         CreateLighting();
-        CreateControls(bowling, batting, shots, match);
+        RunningBetweenWicketsController running = matchObject.AddComponent<RunningBetweenWicketsController>();
+        SetObjectReference(running, "strikerBatter", batter.transform);
+        SetObjectReference(running, "nonStrikerBatter", nonStriker.transform);
+        SetObjectReference(running, "strikerCrease", CreateCreaseMarker("StrikerCrease", new Vector3(0f, 1f, -4.5f)));
+        SetObjectReference(running, "nonStrikerCrease", CreateCreaseMarker("NonStrikerCrease", new Vector3(0f, 1f, 5.5f)));
+        SetObjectReference(running, "matchManager", match);
+        CreateControls(bowling, variations, batting, shots, running, match);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene, ScenePath);
@@ -188,8 +200,9 @@ public static class PrototypeSceneBuilder
         SetObjectReference(wicketTrigger, "matchManager", match);
     }
 
-    private static void CreateControls(BowlingController bowling, BattingController batting,
-        ShotSelectionController shots, MatchManager match)
+    private static void CreateControls(BowlingController bowling, BowlingVariationController variations,
+        BattingController batting, ShotSelectionController shots,
+        RunningBetweenWicketsController running, MatchManager match)
     {
         if (Object.FindObjectOfType<EventSystem>() == null)
         {
@@ -219,8 +232,11 @@ public static class PrototypeSceneBuilder
         scoreText.text = "0/0  0.0";
         SetObjectReference(match, "scoreText", scoreText);
 
-        CreateButton(canvas.transform, "BOWL", new Vector2(0.83f, 0.08f), bowling.BowlDelivery);
-        CreateButton(canvas.transform, "SHOT", new Vector2(0.68f, 0.08f), shots.PlaySelectedShot);
+        CreateButton(canvas.transform, "FAST", new Vector2(0.88f, 0.08f), variations.BowlFast);
+        CreateButton(canvas.transform, "SPIN", new Vector2(0.73f, 0.08f), variations.BowlOffSpin);
+        CreateButton(canvas.transform, "SHOT", new Vector2(0.58f, 0.08f), shots.PlaySelectedShot);
+        CreateButton(canvas.transform, "RUN", new Vector2(0.43f, 0.08f), running.RequestRun);
+        CreateButton(canvas.transform, "2 RUN", new Vector2(0.28f, 0.08f), running.RequestTwoRuns);
         CreateButton(canvas.transform, "DRIVE", new Vector2(0.53f, 0.08f), shots.SelectDrive);
         CreateButton(canvas.transform, "PULL", new Vector2(0.38f, 0.08f), shots.SelectPull);
         CreateButton(canvas.transform, "LOFT", new Vector2(0.23f, 0.08f), shots.SelectLofted);
@@ -253,6 +269,39 @@ public static class PrototypeSceneBuilder
         text.alignment = TextAlignmentOptions.Center;
         text.fontSize = 28f;
         text.color = Color.white;
+    }
+
+    private static Transform CreateCreaseMarker(string name, Vector3 position)
+    {
+        GameObject marker = new GameObject(name);
+        marker.transform.position = position;
+        return marker.transform;
+    }
+
+    private static void ConfigureBowlingProfiles(BowlingVariationController controller)
+    {
+        SerializedObject serialized = new SerializedObject(controller);
+        SerializedProperty profiles = serialized.FindProperty("profiles");
+        profiles.arraySize = 5;
+        float[] speeds = { 26f, 24f, 17f, 18f, 20f };
+        Vector3[] spins =
+        {
+            Vector3.zero,
+            new Vector3(0f, 0f, 0.8f),
+            new Vector3(0f, 8f, 0f),
+            new Vector3(0f, -8f, 0f),
+            Vector3.zero
+        };
+        float[] variation = { 0.01f, 0.08f, 0.04f, 0.04f, 0.02f };
+        for (int i = 0; i < profiles.arraySize; i++)
+        {
+            SerializedProperty item = profiles.GetArrayElementAtIndex(i);
+            item.FindPropertyRelative("type").enumValueIndex = i;
+            item.FindPropertyRelative("speed").floatValue = speeds[i];
+            item.FindPropertyRelative("spin").vector3Value = spins[i];
+            item.FindPropertyRelative("variationAmount").floatValue = variation[i];
+        }
+        serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static void CreateLighting()
