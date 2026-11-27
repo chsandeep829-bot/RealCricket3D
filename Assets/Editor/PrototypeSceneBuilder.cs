@@ -60,11 +60,11 @@ public static class PrototypeSceneBuilder
 
         // Keep the offline match setup, career profile and tournament save systems
         // in the generated scene so they can be wired to menus without manual creation.
+        CricketCareerSaveSystem careerSave = matchObject.AddComponent<CricketCareerSaveSystem>();
+        CricketTournamentManager tournament = matchObject.AddComponent<CricketTournamentManager>();
         CricketMatchSetupController matchSetup = matchObject.AddComponent<CricketMatchSetupController>();
         SetObjectReference(matchSetup, "matchManager", match);
         SetObjectReference(matchSetup, "tournamentManager", tournament);
-        CricketCareerSaveSystem careerSave = matchObject.AddComponent<CricketCareerSaveSystem>();
-        CricketTournamentManager tournament = matchObject.AddComponent<CricketTournamentManager>();
         CricketMatchProgressionBridge progression =
             matchObject.AddComponent<CricketMatchProgressionBridge>();
         SetObjectReference(progression, "matchManager", match);
@@ -129,7 +129,7 @@ public static class PrototypeSceneBuilder
             matchObject.AddComponent<CricketMatchPauseController>();
 
         CreateControls(bowling, variations, batting, shots, running, match,
-            pauseController, matchSetup);
+            pauseController, matchSetup, postMatch);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene, ScenePath);
@@ -248,7 +248,8 @@ public static class PrototypeSceneBuilder
     private static void CreateControls(BowlingController bowling, BowlingVariationController variations,
         BattingController batting, ShotSelectionController shots,
         RunningBetweenWicketsController running, MatchManager match,
-        CricketMatchPauseController pauseController, CricketMatchSetupController matchSetup)
+        CricketMatchPauseController pauseController, CricketMatchSetupController matchSetup,
+        CricketPostMatchMenuController postMatch)
     {
         if (Object.FindObjectOfType<EventSystem>() == null)
         {
