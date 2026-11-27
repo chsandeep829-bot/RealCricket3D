@@ -141,7 +141,8 @@ public static class RealCricketAndroidBuild
 
     private static void ConfigureAdaptiveLauncherIcon(Texture2D logo)
     {
-        PlayerSettings.Android.iconSourceType = AndroidIconSourceType.Image;
+        // Unity 6.6 selects adaptive icon layers through SetPlatformIcons;
+        // it does not expose a separate Android iconSourceType property.
         Texture2D background = CreateOrLoadIconBackground();
         PlatformIcon[] slots = PlayerSettings.GetPlatformIcons(
             NamedBuildTarget.Android, AndroidPlatformIconKind.Adaptive);
