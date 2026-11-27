@@ -24,6 +24,8 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 - `Match/MatchScoringRules.cs`: legal deliveries, wides, no-balls, byes, leg-byes and legal-ball wickets.
 - `UI/MobileCricketControls.cs`: exposes UI actions for shot selection, bowling variations, bowling line/length and running.
 - `UI/SwipeBattingInput.cs`: reads drag gestures, preserves the separately selected shot, and supports a persistent 0–1 sensitivity slider (mapped to 0.5×–2×) plus a reset action. Connect a UI Slider to `SetSensitivityFromSlider(float)` and optionally a reset button to `ResetSensitivity()`.
+- `UI/CricketGraphicsSettings.cs`: persistent Low/Medium/High runtime quality presets and 30/60/90/120 FPS caps. Connect settings buttons to `SetLow/Medium/High` and `Set30Fps/60Fps/90Fps/120Fps`.
+- `UI/CricketSafeArea.cs`: adjusts a full-screen UI root to the device safe area, including notches and rounded corners. Attach it to the root RectTransform under a screen-space Canvas.
 
 ## Existing match format defaults
 
