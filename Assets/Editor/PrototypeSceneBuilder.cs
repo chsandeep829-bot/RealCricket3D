@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 using System.IO;
-using TMPro;
+
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -224,14 +224,14 @@ public static class PrototypeSceneBuilder
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920f, 1080f);
 
-        GameObject scoreObject = new GameObject("Score", typeof(RectTransform), typeof(TextMeshProUGUI));
+        GameObject scoreObject = new GameObject("Score", typeof(RectTransform), typeof(Text));
         scoreObject.transform.SetParent(canvas.transform, false);
         RectTransform scoreRect = scoreObject.GetComponent<RectTransform>();
         scoreRect.anchorMin = new Vector2(0.02f, 0.88f);
         scoreRect.anchorMax = new Vector2(0.35f, 0.99f);
         scoreRect.offsetMin = Vector2.zero;
         scoreRect.offsetMax = Vector2.zero;
-        TextMeshProUGUI scoreText = scoreObject.GetComponent<TextMeshProUGUI>();
+        Text scoreText = scoreObject.GetComponent<Text>();
         scoreText.fontSize = 34f;
         scoreText.color = Color.white;
         scoreText.text = "0/0  0.0";
@@ -269,9 +269,9 @@ public static class PrototypeSceneBuilder
         textRect.anchorMax = Vector2.one;
         textRect.offsetMin = Vector2.zero;
         textRect.offsetMax = Vector2.zero;
-        TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
+        Text text = textObject.GetComponent<Text>();
         text.text = label;
-        text.alignment = TextAlignmentOptions.Center;
+        text.alignment = TextAnchor.MiddleCenter;
         text.fontSize = 28f;
         text.color = Color.white;
     }
