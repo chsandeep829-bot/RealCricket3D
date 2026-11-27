@@ -31,7 +31,13 @@ public static class RealCricketBrandingAssets
         if (icon == null)
             throw new System.InvalidOperationException("REAL CRICKET 3D app icon did not import.");
 
-        PlayerSettings.SetIcons(NamedBuildTarget.Android, new[] { icon }, IconKind.Application);
+        int[] iconSizes = PlayerSettings.GetIconSizes(NamedBuildTarget.Android, IconKind.Application);
+        if (iconSizes == null || iconSizes.Length == 0)
+            throw new System.InvalidOperationException("Unity returned no Android launcher icon slots.");
+
+        Texture2D[] icons = new Texture2D[iconSizes.Length];
+        for (int i = 0; i < icons.Length; i++) icons[i] = icon;
+        PlayerSettings.SetIcons(NamedBuildTarget.Android, icons, IconKind.Application);
         PlayerSettings.productName = "REAL CRICKET 3D";
         PlayerSettings.companyName = "REAL CRICKET STUDIOS";
     }
