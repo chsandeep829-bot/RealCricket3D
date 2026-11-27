@@ -35,6 +35,7 @@ public static class PrototypeSceneBuilder
 
         CreateGround();
         CreatePitch();
+        CreateStadium();
         CreateStumps(new Vector3(0f, 0f, -5.2f), "StrikerStumps");
         CreateStumps(new Vector3(0f, 0f, 6.5f), "BowlerStumps");
 
@@ -167,6 +168,110 @@ public static class PrototypeSceneBuilder
         pitch.transform.position = new Vector3(0f, 0.025f, 0.5f);
         pitch.transform.localScale = new Vector3(2.8f, 0.05f, 12f);
         pitch.GetComponent<Renderer>().sharedMaterial = MakeMaterial("PitchMaterial", new Color(0.62f, 0.48f, 0.31f));
+    }
+
+    private static void CreateStadium()
+    {
+        Material standMaterial = MakeMaterial("StadiumStandMaterial", new Color(0.025f, 0.055f, 0.12f));
+        Material seatMaterial = MakeMaterial("StadiumSeatMaterial", new Color(0.08f, 0.22f, 0.38f));
+        Material crowdA = MakeMaterial("CrowdBlueMaterial", new Color(0.12f, 0.32f, 0.72f));
+        Material crowdB = MakeMaterial("CrowdWhiteMaterial", new Color(0.82f, 0.86f, 0.92f));
+        Material crowdC = MakeMaterial("CrowdGoldMaterial", new Color(0.95f, 0.62f, 0.12f));
+
+        // Four compact grandstand banks frame the playable oval without blocking the camera.
+        CreateStandBank("NorthStand", new Vector3(0f, 3.2f, 25f),
+            new Vector3(46f, 6.4f, 5f), standMaterial, seatMaterial);
+        CreateStandBank("SouthStand", new Vector3(0f, 3.2f, -25f),
+            new Vector3(46f, 6.4f, 5f), standMaterial, seatMaterial);
+        CreateStandBank("EastStand", new Vector3(25f, 3.2f, 0f),
+            new Vector3(5f, 6.4f, 42f), standMaterial, seatMaterial);
+        CreateStandBank("WestStand", new Vector3(-25f, 3.2f, 0f),
+            new Vector3(5f, 6.4f, 42f), standMaterial, seatMaterial);
+
+        // Lightweight crowd blocks add stadium scale while keeping the prototype mobile-friendly.
+        for (int row = 0; row < 3; row++)
+        {
+            for (int i = 0; i < 14; i++)
+            {
+                float x = -20f + i * 3f;
+                Color color = (i % 3 == 0) ? crowdA.color :
+                    (i % 3 == 1 ? crowdB.color : crowdC.color);
+                CreateCrowdCluster("NorthCrowd_" + row + "_" + i,
+                    new Vector3(x, 6.2f + row * 0.45f, 22.2f + row * 0.55f), color);
+                CreateCrowdCluster("SouthCrowd_" + row + "_" + i,
+                    new Vector3(x, 6.2f + row * 0.45f, -22.2f - row * 0.55f), color);
+            }
+        }
+
+        CreateFloodlight("Floodlight_NW", new Vector3(-23f, 0f, 20f));
+        CreateFloodlight("Floodlight_NE", new Vector3(23f, 0f, 20f));
+        CreateFloodlight("Floodlight_SW", new Vector3(-23f, 0f, -20f));
+        CreateFloodlight("Floodlight_SE", new Vector3(23f, 0f, -20f));
+
+        // Boundary markers make the playable oval readable from the broadcast camera.
+        for (int i = 0; i < 32; i++)
+        {
+            float angle = i * Mathf.PI * 2f / 32f;
+            GameObject marker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            marker.name = "BoundaryMarker_" + i;
+            marker.transform.position = new Vector3(Mathf.Cos(angle) * 19f, 0.12f,
+                Mathf.Sin(angle) * 19f);
+            marker.transform.localScale = Vector3.one * 0.22f;
+            marker.GetComponent<Renderer>().sharedMaterial =
+                (i % 2 == 0) ? crowdB : crowdC;
+        }
+    }
+
+    private static void CreateStandBank(string name, Vector3 position, Vector3 scale,
+        Material bodyMaterial, Material seatMaterial)
+    {
+        GameObject stand = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        stand.name = name;
+        stand.transform.position = position;
+        stand.transform.localScale = scale;
+        stand.GetComponent<Renderer>().sharedMaterial = bodyMaterial;
+
+        for (int tier = 0; tier < 3; tier++)
+        {
+            GameObject fascia = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            fascia.name = name + "_Tier_" + tier;
+            fascia.transform.position = position + Vector3.up * (-1.7f + tier * 1.7f);
+            fascia.transform.localScale = new Vector3(scale.x * 1.015f, 0.16f, scale.z * 1.04f);
+            fascia.GetComponent<Renderer>().sharedMaterial = seatMaterial;
+        }
+    }
+
+    private static void CreateCrowdCluster(string name, Vector3 position, Color color)
+    {
+        GameObject crowd = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        crowd.name = name;
+        crowd.transform.position = position;
+        crowd.transform.localScale = new Vector3(0.42f, 0.32f, 0.24f);
+        crowd.GetComponent<Renderer>().sharedMaterial =
+            MakeMaterial(name + "_Material", color);
+    }
+
+    private static void CreateFloodlight(string name, Vector3 position)
+    {
+        GameObject pole = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        pole.name = name + "_Pole";
+        pole.transform.position = position + Vector3.up * 8f;
+        pole.transform.localScale = new Vector3(0.18f, 8f, 0.18f);
+        pole.GetComponent<Renderer>().sharedMaterial =
+            MakeMaterial(name + "_PoleMaterial", new Color(0.18f, 0.2f, 0.24f));
+
+        GameObject lamp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        lamp.name = name + "_LampPanel";
+        lamp.transform.position = position + new Vector3(0f, 16f, 0f);
+        lamp.transform.localScale = new Vector3(2.4f, 0.9f, 0.35f);
+        lamp.GetComponent<Renderer>().sharedMaterial =
+            MakeMaterial(name + "_LampMaterial", new Color(0.88f, 0.94f, 1f));
+
+        Light floodlight = lamp.AddComponent<Light>();
+        floodlight.type = LightType.Point;
+        floodlight.range = 32f;
+        floodlight.intensity = 3f;
+        floodlight.color = new Color(0.78f, 0.86f, 1f);
     }
 
     private static GameObject CreatePlayer(string name, Vector3 position, Color color)
