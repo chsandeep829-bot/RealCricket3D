@@ -21,7 +21,7 @@ public sealed class CricketHomeScreen : MonoBehaviour
         home=Panel(canvas.transform,HomeName,Navy,new Vector2(.5f,.5f),Vector2.one,Vector2.zero);home.transform.SetAsLastSibling();
         Panel(home.transform,"GoldTopLine",Gold,new Vector2(.5f,.995f),new Vector2(1,.01f),Vector2.zero);
         Panel(home.transform,"PitchGlow",new Color(.02f,.28f,.25f,1),new Vector2(.5f,.145f),new Vector2(1,.012f),Vector2.zero);
-        Image emblem=Picture(home.transform,"REAL_CRICKET_3D_Logo",new Vector2(.075f,.88f),new Vector2(128,128),MakeEmblem());emblem.preserveAspect=true;
+        Image emblem=Picture(home.transform,"REAL_CRICKET_3D_Logo",new Vector2(.075f,.88f),new Vector2(128,128),RealCricketLogo.CreateSprite());emblem.preserveAspect=true;
         Label(home.transform,"REAL CRICKET",new Vector2(.205f,.91f),new Vector2(390,50),34,Color.white,TextAnchor.MiddleLeft);
         Label(home.transform,"3D  •  CRICKET BEYOND LIMITS",new Vector2(.205f,.865f),new Vector2(430,40),21,Gold,TextAnchor.MiddleLeft);
         Label(home.transform,"REAL CRICKET 3D",new Vector2(.52f,.89f),new Vector2(560,72),48,Color.white,TextAnchor.MiddleCenter);
