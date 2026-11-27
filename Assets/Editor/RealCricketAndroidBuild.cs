@@ -10,6 +10,7 @@ public static class RealCricketAndroidBuild
 {
     private const string LogoPath = "Assets/Resources/Branding/CricnovaLogo.jpg";
     private const string IconBackgroundPath = "Assets/Resources/Branding/CricnovaIconBackground.png";
+    private const string SplashLogoPath = "Assets/Resources/Branding/CricnovaSplashLogo.jpg";
     private const string OutputDirectory = "Builds/Android";
     private const string OutputPath = OutputDirectory + "/CRICNOVA3D.apk";
 
@@ -63,27 +64,43 @@ public static class RealCricketAndroidBuild
         if (!File.Exists(LogoPath))
             throw new System.Exception("Missing CRICNOVA logo asset: " + LogoPath);
 
-        // Import the supplied logo as a Sprite for the native Android launch splash
-        // and as a Texture2D for runtime UI and adaptive launcher icon layers.
+        // Keep the source logo as a Texture2D so Resources.Load<Texture2D> in
+        // the in-game UI continues to work. Create a separate Sprite asset for
+        // Unity's native splash-screen logo slot.
         TextureImporter logoImporter = AssetImporter.GetAtPath(LogoPath) as TextureImporter;
         if (logoImporter == null)
             throw new System.Exception("Unity could not import the CRICNOVA logo texture.");
 
-        bool reimport = logoImporter.textureType != TextureImporterType.Sprite ||
-                        logoImporter.spriteImportMode != SpriteImportMode.Single ||
-                        logoImporter.mipmapEnabled;
-        logoImporter.textureType = TextureImporterType.Sprite;
-        logoImporter.spriteImportMode = SpriteImportMode.Single;
-        logoImporter.mipmapEnabled = false;
-        logoImporter.alphaIsTransparency = false;
-        logoImporter.maxTextureSize = 2048;
-        if (reimport) logoImporter.SaveAndReimport();
+        if (logoImporter.textureType != TextureImporterType.Default || logoImporter.mipmapEnabled)
+        {
+            logoImporter.textureType = TextureImporterType.Default;
+            logoImporter.mipmapEnabled = false;
+            logoImporter.alphaIsTransparency = false;
+            logoImporter.maxTextureSize = 2048;
+            logoImporter.SaveAndReimport();
+        }
 
         AssetDatabase.ImportAsset(LogoPath, ImportAssetOptions.ForceUpdate);
         Texture2D logoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(LogoPath);
-        Sprite logoSprite = AssetDatabase.LoadAssetAtPath<Sprite>(LogoPath);
-        if (logoTexture == null || logoSprite == null)
-            throw new System.Exception("CRICNOVA logo did not import as a usable texture and sprite.");
+        if (logoTexture == null)
+            throw new System.Exception("CRICNOVA logo did not import as a Texture2D.");
+
+        Directory.CreateDirectory(Path.GetDirectoryName(SplashLogoPath));
+        File.Copy(LogoPath, SplashLogoPath, true);
+        AssetDatabase.ImportAsset(SplashLogoPath, ImportAssetOptions.ForceUpdate);
+        TextureImporter splashImporter = AssetImporter.GetAtPath(SplashLogoPath) as TextureImporter;
+        if (splashImporter == null)
+            throw new System.Exception("Unity could not import the CRICNOVA splash logo.");
+        splashImporter.textureType = TextureImporterType.Sprite;
+        splashImporter.spriteImportMode = SpriteImportMode.Single;
+        splashImporter.mipmapEnabled = false;
+        splashImporter.alphaIsTransparency = false;
+        splashImporter.maxTextureSize = 2048;
+        splashImporter.SaveAndReimport();
+
+        Sprite logoSprite = AssetDatabase.LoadAssetAtPath<Sprite>(SplashLogoPath);
+        if (logoSprite == null)
+            throw new System.Exception("CRICNOVA splash logo did not import as a Sprite.");
 
         ConfigureAdaptiveLauncherIcon(logoTexture);
 
