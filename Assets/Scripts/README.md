@@ -73,11 +73,6 @@ The generated prototype HUD includes a `PAUSE / RESUME` button in the upper-righ
 
 ## Swipe batting controls
 
-The generated HUD includes a transparent swipe area over the central gameplay view. Drag and release to play a shot:
-- Swipe up for a lofted shot.
-- Swipe down for a defensive, lower-loft shot.
-- Swipe right for a pull-style shot aimed toward the right.
-- Swipe left for a cut-style shot aimed toward the left.
-- Short gestures below the configured pixel threshold are ignored.
+The generated HUD keeps shot selection separate from swipe aiming. Select one of the dedicated Loft, Stroke, Push or Leave buttons, then swipe and release in the central gameplay area to aim and play the selected shot. A swipe does not silently change the selected shot type. Leave is a deliberate no-shot selection: the bat does not swing. Push uses a lower-power, low-loft profile; Stroke uses a normal straight profile; Loft uses a higher-loft profile. Short gestures below the configured pixel threshold are ignored.
 
 The swipe surface is created behind the HUD buttons, so the existing FAST, SPIN, SHOT, RUN and shot-selection buttons remain clickable. Gesture mapping is a prototype control scheme; timing, shot choice and direction still need tuning and playtesting in Unity on a touch device.
