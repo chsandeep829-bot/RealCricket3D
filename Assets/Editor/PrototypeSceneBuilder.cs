@@ -89,6 +89,8 @@ public static class PrototypeSceneBuilder
         SetObjectReference(running, "matchManager", match);
         CreateRunOutZone(new Vector3(0f, 0.8f, 6.5f), match, running);
         CreateFielderThrowSetup(match, running);
+        CreateCatchFielder("LeftSlipFielder", new Vector3(-4f, 0f, -1f), match);
+        CreateCatchFielder("RightSlipFielder", new Vector3(4f, 0f, -1f), match);
         CreateControls(bowling, variations, batting, shots, running, match);
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -284,6 +286,19 @@ public static class PrototypeSceneBuilder
         RunOutWicketZone runOut = zone.AddComponent<RunOutWicketZone>();
         SetObjectReference(runOut, "matchManager", match);
         SetObjectReference(runOut, "runningController", running);
+    }
+
+    private static void CreateCatchFielder(string name, Vector3 position, MatchManager match)
+    {
+        GameObject fielder = CreatePlayer(name, position, new Color(0.9f, 0.72f, 0.12f));
+        GameObject catchArea = new GameObject("CatchTrigger");
+        catchArea.transform.SetParent(fielder.transform);
+        catchArea.transform.localPosition = new Vector3(0f, 0.8f, 0f);
+        SphereCollider trigger = catchArea.AddComponent<SphereCollider>();
+        trigger.isTrigger = true;
+        trigger.radius = 1.25f;
+        FielderCatchZone catchZone = catchArea.AddComponent<FielderCatchZone>();
+        SetObjectReference(catchZone, "matchManager", match);
     }
 
     private static void CreateFielderThrowSetup(MatchManager match,
