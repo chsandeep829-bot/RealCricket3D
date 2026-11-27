@@ -79,7 +79,14 @@ public class BattingController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!isSwinging) return;
+        TryHitBall(collision);
+    }
+
+    // Also called by BatCollisionRelay on the bat's child collider. The batter
+    // root has no Rigidbody, so relying only on this root callback can miss bat contact.
+    public void TryHitBall(Collision collision)
+    {
+        if (!isSwinging || collision == null) return;
         CricketBall ball = collision.collider.GetComponentInParent<CricketBall>();
         if (ball == null || ball.HasBeenHit) return;
 
