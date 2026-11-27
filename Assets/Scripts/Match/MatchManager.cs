@@ -39,6 +39,7 @@ public class MatchManager : MonoBehaviour
     private bool matchCompleted;
     private bool matchDraw;
     private int target;
+    private bool strikerAtBowlerEnd;
 
     public int Runs => runs;
     public int Wickets => wickets;
@@ -47,6 +48,7 @@ public class MatchManager : MonoBehaviour
     public int BallsInOver => legalBalls % 6;
     public int InningsNumber => inningsNumber;
     public int Target => target;
+    public bool StrikerAtBowlerEnd => strikerAtBowlerEnd;
     public bool IsInningsCompleted => inningsCompleted;
     public bool IsMatchCompleted => matchCompleted;
     public CricketMatchFormat Format => format;
@@ -84,6 +86,7 @@ public class MatchManager : MonoBehaviour
         target = 0;
         matchCompleted = false;
         matchDraw = false;
+        strikerAtBowlerEnd = false;
         BeginCurrentInnings();
     }
 
@@ -112,6 +115,7 @@ public class MatchManager : MonoBehaviour
     {
         if (!CanScore() || batterRuns < 0) return;
         runs += batterRuns;
+        RotateStrikeForRuns(batterRuns);
         legalBalls++;
         SaveCurrentInnings();
         CheckDeliveryEnd();
@@ -122,8 +126,7 @@ public class MatchManager : MonoBehaviour
         if (!CanScore()) return;
         legalBalls++;
         SaveCurrentInnings();
-        if (target > 0 && runs >= target) CompleteMatch();
-        else if (legalBalls >= maxOvers * 6) CompleteInnings();
+        CheckDeliveryEnd();
         else RefreshScoreboard();
     }
 
@@ -166,6 +169,7 @@ public class MatchManager : MonoBehaviour
     {
         if (!CanScore() || byeRuns < 0) return;
         runs += byeRuns;
+        RotateStrikeForRuns(byeRuns);
         legalBalls++;
         SaveCurrentInnings();
         CheckDeliveryEnd();
@@ -207,6 +211,7 @@ public class MatchManager : MonoBehaviour
         runs = 0;
         wickets = 0;
         legalBalls = 0;
+        strikerAtBowlerEnd = false;
         inningsCompleted = false;
         ApplyFormatLimits();
 
@@ -225,7 +230,17 @@ public class MatchManager : MonoBehaviour
     {
         if (target > 0 && runs >= target) CompleteMatch();
         else if (wickets >= 10 || legalBalls >= maxOvers * 6) CompleteInnings();
-        else RefreshScoreboard();
+        else
+        {
+            // At the end of each six-ball over, the batters change ends.
+            if (legalBalls > 0 && legalBalls % 6 == 0) strikerAtBowlerEnd = !strikerAtBowlerEnd;
+            RefreshScoreboard();
+        }
+    }
+
+    private void RotateStrikeForRuns(int completedRuns)
+    {
+        if (completedRuns % 2 != 0) strikerAtBowlerEnd = !strikerAtBowlerEnd;
     }
 
     private void SaveCurrentInnings()
@@ -288,6 +303,7 @@ public class MatchManager : MonoBehaviour
             BattingTeamName + "  " + runs + "/" + wickets +
             "\\nINNINGS  " + inningsNumber + "/" + InningsCount +
             "\\nOVERS  " + oversText + " / " + maxOvers +
+            "\\nSTRIKER END  " + (strikerAtBowlerEnd ? "BOWLER END" : "SCORE END") +
             targetText + statusText;
     }
 }
