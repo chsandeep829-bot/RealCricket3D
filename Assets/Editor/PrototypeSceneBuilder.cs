@@ -374,7 +374,7 @@ public static class PrototypeSceneBuilder
         text.alignment = TextAnchor.MiddleCenter;
         text.fontSize = fontSize;
         text.color = Color.white;
-        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         return text;
     }
 
