@@ -119,6 +119,7 @@ public static class RealCricketAndroidBuild
 
     private static void ConfigureAdaptiveLauncherIcon(Texture2D logo)
     {
+        PlayerSettings.Android.iconSourceType = AndroidIconSourceType.Image;
         Texture2D background = CreateOrLoadIconBackground();
         PlatformIcon[] slots = PlayerSettings.GetPlatformIcons(
             NamedBuildTarget.Android, AndroidPlatformIconKind.Adaptive);
