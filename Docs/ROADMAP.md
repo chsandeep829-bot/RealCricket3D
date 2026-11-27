@@ -34,6 +34,8 @@ Unity project structure, an Editor greybox scene generator, first-pass batting/b
 - [x] Match setup controller for team selection, T20/ODI/Test selection and toss decision.
 - [x] Local career profile persistence for player name and basic statistics.
 - [x] Four-team knockout tournament bracket with local save.
+- [x] Generated scene now creates the match setup, career-save and tournament managers together.
+- [x] Completed match results are automatically passed to career statistics and an active tournament by `CricketMatchProgressionBridge` (Team A is the prototype player side).
 - [ ] Build polished menu screens and connect all setup/result callbacks.
 - [ ] Integrate tournament fixtures and match results automatically.
 - [ ] Expand career mode with seasons, unlocks, player progression and save migration.
