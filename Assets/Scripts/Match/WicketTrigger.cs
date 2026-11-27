@@ -18,7 +18,7 @@ public class WicketTrigger : MonoBehaviour
         if (ball == null || ball.HasBeenHit || wicketRecorded || matchManager == null) return;
 
         wicketRecorded = true;
-        matchManager.RecordWicket();
+        matchManager.RecordWicketOnLegalDelivery();
         if (disableAfterWicket) enabled = false;
     }
 
