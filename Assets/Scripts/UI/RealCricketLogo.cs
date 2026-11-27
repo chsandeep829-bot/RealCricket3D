@@ -53,7 +53,7 @@ public static class RealCricketLogo
         texture.filterMode = FilterMode.Bilinear;
         texture.wrapMode = TextureWrapMode.Clamp;
         texture.SetPixels32(pixels);
-        texture.Apply(false, true);
+        texture.Apply(false, false);
         cached = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 256);
         cached.name = "REAL_CRICKET_3D_Golden_Shield";
         return cached;
