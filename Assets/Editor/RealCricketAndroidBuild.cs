@@ -8,7 +8,8 @@ public static class RealCricketAndroidBuild
 {
     public static void BuildAndroid()
     {
-        Debug.Log("Preparing RealCricket3D Android build...");
+        Debug.Log("Preparing REAL CRICKET 3D Android build...");
+        RealCricketBrandingAssets.ConfigureAndroidIcon();
 
         EditorUserBuildSettings.SwitchActiveBuildTarget(
             BuildTargetGroup.Android,
@@ -20,6 +21,8 @@ public static class RealCricketAndroidBuild
         const string outputPath = outputDirectory + "/RealCricket3D.apk";
         Directory.CreateDirectory(outputDirectory);
 
+        PlayerSettings.productName = "REAL CRICKET 3D";
+        PlayerSettings.companyName = "REAL CRICKET STUDIOS";
         PlayerSettings.SetApplicationIdentifier(
             UnityEditor.Build.NamedBuildTarget.Android,
             "com.sandeep.realcricket3d");
