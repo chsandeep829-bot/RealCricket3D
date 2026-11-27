@@ -1,42 +1,48 @@
 # RealCricket3D development roadmap
 
 ## Current repository stage
-Starter Unity C# gameplay foundation: ball Rigidbody control, basic bowling and batting actions, a simple innings score manager, boundary and wicket trigger prototypes, mobile button bridge and camera follow.
+Unity project structure, an Editor greybox scene generator, first-pass batting/bowling/ball scripts, basic fielding and camera scripts, and an expanded local match manager.
 
 ## Milestone 1 — Playable local prototype
-- Create Unity 3D Core project and a test ground scene.
-- Add batter, bowler, stumps, pitch and ball prefabs.
-- Wire batting, bowling, scoreboard, boundary and wicket triggers.
-- Add legal-delivery tracking and a basic innings reset flow.
-- Test ball physics and tune scale, gravity, bounce and friction.
+- [x] Unity project structure and prototype scene generator.
+- [x] First-pass ball Rigidbody, batting and bowling controls.
+- [x] Basic scoreboard, boundary and wicket trigger prototypes.
+- [x] T20/ODI/Test format configuration and innings score tracking.
+- [x] Two-innings limited-overs flow and target chase.
+- [x] Simplified four-innings Test flow and final-innings target.
+- [ ] Generate the scene in Unity and resolve any Editor compile/import issues.
+- [ ] Play-test ball physics, scoring triggers and delivery timing.
 
-## Milestone 2 — Cricket rules
-- Legal and illegal deliveries, wides and no-balls.
-- Byes, leg-byes, boundaries, overthrows and run-outs.
-- Strike rotation, over changes, innings transitions and target chasing.
-- T20, ODI and Test match configuration.
+## Milestone 2 — Cricket rules and match flow
+- [x] Legal delivery, wide, no-ball, bye and leg-bye scoring entry points.
+- [x] Innings transitions, target chase and basic match result.
+- [ ] Strike rotation and end changes.
+- [ ] Run-outs, catches, stumping and overthrow rules.
+- [ ] Better wicket/no-ball/wide detection and dismissal validation.
+- [ ] Test declarations, follow-on and day/session rules.
 
 ## Milestone 3 — Gameplay depth
-- Shot selection and timing windows: defend, drive, cut, pull, sweep and loft.
-- Pace, swing, seam and spin bowling variations.
-- Fielder positioning, catching, ground fielding and wicketkeeping.
-- Replay camera and match highlights.
+- [ ] Shot timing windows: defend, drive, cut, pull, sweep and loft.
+- [ ] Pace, swing, seam and spin bowling variations with tuned physics.
+- [ ] Fielder positioning, catching, ground fielding and wicketkeeping.
+- [ ] Player movement, running between wickets and replay camera.
 
 ## Milestone 4 — Presentation
-- Original player, bat, ball, pitch and stadium assets.
-- Player rigs, batting/bowling/fielding animations and blend trees.
-- Stadium lighting, crowd ambience, commentary and effects.
-- Menus, team selection, settings, pause and match summary.
+- [ ] Original player rigs and animation state machines.
+- [ ] Stadium art, lighting, crowd ambience, commentary and effects.
+- [ ] Menus, team selection, toss, pause and match summary.
+- [ ] Original high-quality 3D assets and optimized materials.
 
 ## Milestone 5 — Android release preparation
-- Touch-first controls and configurable sensitivity.
-- Quality presets, LODs, baked lighting and optimized textures.
-- Android build settings, device profiling and performance testing.
-- Save data, accessibility options and release testing.
+- [ ] Touch-first controls and configurable sensitivity.
+- [ ] Quality presets, LODs, baked lighting and performance profiling.
+- [ ] Android build settings, device profiling and performance testing.
+- [ ] Save data, accessibility options and release testing.
 
 ## Milestone 6 — Online features (later)
-- Matchmaking, authoritative match simulation, reconnect handling and anti-cheat design.
-- Online services should be added only after offline match simulation is stable.
+- [ ] Matchmaking and authoritative match simulation.
+- [ ] Reconnect handling and fair-play/anti-cheat design.
+- [ ] Online services only after offline match simulation is stable.
 
 ## Definition of done
 A milestone is complete only after its scene and assets are integrated in Unity, builds successfully, and is tested in the Unity Editor and on target Android devices. Repository scripts alone do not constitute a finished game.
