@@ -127,7 +127,6 @@ public class MatchManager : MonoBehaviour
         legalBalls++;
         SaveCurrentInnings();
         CheckDeliveryEnd();
-        else RefreshScoreboard();
     }
 
     public void RecordWicket()
@@ -146,6 +145,7 @@ public class MatchManager : MonoBehaviour
         if (!CanScore()) return;
         legalBalls++;
         wickets = Mathf.Min(10, wickets + 1);
+        if (legalBalls % 6 == 0) strikerAtBowlerEnd = !strikerAtBowlerEnd;
         SaveCurrentInnings();
 
         if (target > 0 && runs >= target) CompleteMatch();
@@ -156,13 +156,23 @@ public class MatchManager : MonoBehaviour
     public void RecordWide(int penaltyRuns = 1, int additionalRuns = 0)
     {
         if (!CanScore()) return;
-        AddRuns(Mathf.Max(0, penaltyRuns) + Mathf.Max(0, additionalRuns));
+        int total = Mathf.Max(0, penaltyRuns) + Mathf.Max(0, additionalRuns);
+        runs += total;
+        RotateStrikeForRuns(total);
+        SaveCurrentInnings();
+        if (target > 0 && runs >= target) CompleteMatch();
+        else RefreshScoreboard();
     }
 
     public void RecordNoBall(int penaltyRuns = 1, int batterRuns = 0)
     {
         if (!CanScore()) return;
-        AddRuns(Mathf.Max(0, penaltyRuns) + Mathf.Max(0, batterRuns));
+        int total = Mathf.Max(0, penaltyRuns) + Mathf.Max(0, batterRuns);
+        runs += total;
+        RotateStrikeForRuns(total);
+        SaveCurrentInnings();
+        if (target > 0 && runs >= target) CompleteMatch();
+        else RefreshScoreboard();
     }
 
     public void RecordBye(int byeRuns)
