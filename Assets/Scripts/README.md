@@ -34,7 +34,7 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 
 1. Open the repository as a Unity project and let Unity finish importing and compiling.
 2. Use **RealCricket3D → Build Prototype Scene** from the Unity Editor menu.
-3. Open `Assets/Scenes/CricketPrototype.unity` and press Play.
+3. Open `Assets/Scenes/CricketPrototype.unity` and press Play. The match setup menu appears first: change both teams if desired, choose T20/ODI/Test, press TOSS, then choose WINNER BAT or WINNER BOWL to enter the match.
 4. Assign missing references in the Inspector. For timing feedback, assign a Unity UI Text to BattingController's optional Timing Feedback field.
 5. Add camera rigs and assign them to CricketBroadcastDirector. Use at least three camera entries for broadcast, bowler and batting views.
 6. Add CricketMatchSetupController to a menu object, assign MatchManager, and wire team selection, format, toss and start buttons.
