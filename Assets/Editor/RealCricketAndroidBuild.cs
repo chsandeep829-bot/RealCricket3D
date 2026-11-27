@@ -24,7 +24,7 @@ public static class RealCricketAndroidBuild
         PlayerSettings.companyName = "CRICNOVA STUDIOS";
         PlayerSettings.SetApplicationIdentifier(
             UnityEditor.Build.NamedBuildTarget.Android,
-            "com.cricnovastudios.cricnova3d");
+            "com.sandeep.realcricket3d");
 
         Texture2D cricnovaIcon = Resources.Load<Texture2D>("Branding/CricnovaLogo");
         if (cricnovaIcon != null)
