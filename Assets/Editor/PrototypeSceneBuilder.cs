@@ -456,6 +456,17 @@ public static class PrototypeSceneBuilder
         ruleRect.offsetMax = Vector2.zero;
         goldRule.GetComponent<Image>().color = new Color(0.86f, 0.62f, 0.18f, 1f);
 
+        GameObject logoObject = new GameObject("REAL_CRICKET_3D_Golden_Shield", typeof(RectTransform), typeof(Image));
+        logoObject.transform.SetParent(card.transform, false);
+        RectTransform logoRect = logoObject.GetComponent<RectTransform>();
+        logoRect.anchorMin = new Vector2(0.5f, 0.965f);
+        logoRect.anchorMax = new Vector2(0.5f, 0.965f);
+        logoRect.sizeDelta = new Vector2(62f, 62f);
+        Image logoImage = logoObject.GetComponent<Image>();
+        logoImage.sprite = RealCricketLogo.CreateSprite();
+        logoImage.preserveAspect = true;
+        logoImage.raycastTarget = false;
+
         CreateMenuText(card.transform, "REAL CRICKET 3D  |  MATCH SETUP",
             new Vector2(0.5f, 0.88f), new Vector2(1100f, 74f), 38);
 
