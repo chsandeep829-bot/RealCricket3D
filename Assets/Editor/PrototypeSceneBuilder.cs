@@ -96,6 +96,10 @@ public static class PrototypeSceneBuilder
 
         MatchScoringRules scoring = matchObject.AddComponent<MatchScoringRules>();
         SetObjectReference(scoring, "matchManager", match);
+        CricketBallDeliveryResolver deliveryResolver =
+            matchObject.AddComponent<CricketBallDeliveryResolver>();
+        SetObjectReference(deliveryResolver, "matchManager", match);
+        matchObject.AddComponent<CricketGraphicsSettings>();
 
         CreateBoundary(match);
         CreateWicketTrigger(match);
@@ -259,7 +263,7 @@ public static class PrototypeSceneBuilder
         }
 
         GameObject canvasObject = new GameObject("GameHUD", typeof(RectTransform), typeof(Canvas),
-            typeof(CanvasScaler), typeof(GraphicRaycaster));
+            typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CricketSafeArea));
         Canvas canvas = canvasObject.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
