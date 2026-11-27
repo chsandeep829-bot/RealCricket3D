@@ -80,7 +80,7 @@ public static class PrototypeSceneBuilder
         GameObject bowlingObject = new GameObject("BowlingController");
         BowlingController bowling = bowlingObject.AddComponent<BowlingController>();
         SetObjectReference(bowling, "ballPrefab", ballPrefab);
-        SetObjectReference(bowling, "releasePoint", release.transform);
+        SetObjectReference(bowling, "releasePoint", release.transform);\n        SetObjectReference(bowling, "playerMotion", bowler.GetComponent<ProceduralCricketPlayerMotion>());
 
         BowlingVariationController variations = bowlingObject.AddComponent<BowlingVariationController>();
         SetObjectReference(variations, "ballPrefab", ballPrefab);
@@ -89,7 +89,7 @@ public static class PrototypeSceneBuilder
 
         BattingController batting = batter.AddComponent<BattingController>();
         SetObjectReference(batting, "bat", bat);
-        SetObjectReference(batting, "shotDirection", shotDirection);
+        SetObjectReference(batting, "shotDirection", shotDirection);\n        SetObjectReference(batting, "proceduralMotion", batter.GetComponent<ProceduralCricketPlayerMotion>());
 
         ShotSelectionController shots = batter.AddComponent<ShotSelectionController>();
         SetObjectReference(shots, "battingController", batting);
@@ -275,12 +275,54 @@ public static class PrototypeSceneBuilder
 
     private static GameObject CreatePlayer(string name, Vector3 position, Color color)
     {
-        GameObject player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-        player.name = name;
+        GameObject player = new GameObject(name);
         player.transform.position = position + Vector3.up;
-        player.transform.localScale = new Vector3(0.65f, 1f, 0.65f);
-        player.GetComponent<Renderer>().sharedMaterial = MakeMaterial(name + "Material", color);
+
+        Material kit = MakeMaterial(name + "Material", color);
+        Material skin = MakeMaterial(name + "SkinMaterial", new Color(0.72f, 0.48f, 0.32f));
+        Material shoe = MakeMaterial(name + "ShoeMaterial", new Color(0.045f, 0.05f, 0.06f));
+
+        Transform torso = CreateAvatarPart(player.transform, "Torso", PrimitiveType.Capsule,
+            new Vector3(0f, 0.02f, 0f), new Vector3(0.48f, 0.43f, 0.30f), kit);
+        Transform head = CreateAvatarPart(player.transform, "Head", PrimitiveType.Sphere,
+            new Vector3(0f, 0.82f, 0f), new Vector3(0.24f, 0.27f, 0.24f), skin);
+        Transform leftArm = CreateAvatarLimb(player.transform, "LeftArm",
+            new Vector3(-0.34f, 0.28f, 0f), kit);
+        Transform rightArm = CreateAvatarLimb(player.transform, "RightArm",
+            new Vector3(0.34f, 0.28f, 0f), kit);
+        Transform leftLeg = CreateAvatarLimb(player.transform, "LeftLeg",
+            new Vector3(-0.16f, -0.38f, 0f), shoe);
+        Transform rightLeg = CreateAvatarLimb(player.transform, "RightLeg",
+            new Vector3(0.16f, -0.38f, 0f), shoe);
+
+        ProceduralCricketPlayerMotion motion = player.AddComponent<ProceduralCricketPlayerMotion>();
+        motion.Configure(torso, head, leftArm, rightArm, leftLeg, rightLeg);
         return player;
+    }
+
+    private static Transform CreateAvatarPart(Transform parent, string name, PrimitiveType type,
+        Vector3 localPosition, Vector3 localScale, Material material)
+    {
+        GameObject part = GameObject.CreatePrimitive(type);
+        part.name = name;
+        part.transform.SetParent(parent, false);
+        part.transform.localPosition = localPosition;
+        part.transform.localScale = localScale;
+        part.GetComponent<Renderer>().sharedMaterial = material;
+        Collider collider = part.GetComponent<Collider>();
+        if (collider != null) Object.DestroyImmediate(collider);
+        return part.transform;
+    }
+
+    private static Transform CreateAvatarLimb(Transform parent, string name,
+        Vector3 pivotPosition, Material material)
+    {
+        GameObject pivot = new GameObject(name);
+        pivot.transform.SetParent(parent, false);
+        pivot.transform.localPosition = pivotPosition;
+        CreateAvatarPart(pivot.transform, name + "Mesh", PrimitiveType.Capsule,
+            new Vector3(0f, -0.28f, 0f), new Vector3(0.115f, 0.28f, 0.115f), material);
+        return pivot.transform;
     }
 
     private static Transform CreateBat(Transform parent)
