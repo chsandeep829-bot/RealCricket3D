@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!129 &1
+PlayerSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 27
+  productGUID: 9b2d4c6e8f104a2b9c7d6e5f4a3b2c1d
+  AndroidProfiler: 0
+  AndroidFilterTouchesWhenObscured: 0
+  AndroidEnableSustainedPerformanceMode: 0
+  defaultScreenOrientation: 4
+  defaultScreenWidth: 1920
+  defaultScreenHeight: 1080
+  defaultScreenWidthWeb: 960
+  defaultScreenHeightWeb: 600
+  m_SplashScreenBackgroundColor: {r: 0.025, g: 0.055, b: 0.10, a: 1}
+  companyName: Sandeep Studio
+  productName: REAL CRICKET 3D
+  bundleVersion: 0.1.0
+  applicationIdentifier:
+    Android: com.sandeep.realcricket3d
+  AndroidBundleVersionCode: 1
+  AndroidMinSdkVersion: 23
+  AndroidTargetSdkVersion: 35
+  AndroidTargetArchitectures: 2
+  scriptingBackend:
+    Android: 1
+  il2cppCompilerConfiguration:
+    Android: 0
+  apiCompatibilityLevelPerPlatform:
+    Android: 6
+  activeInputHandler: 0
