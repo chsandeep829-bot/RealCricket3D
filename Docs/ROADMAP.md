@@ -49,7 +49,7 @@ Unity project structure, an Editor greybox scene generator, first-pass batting/b
 - [x] Runtime Low/Medium/High quality controls and persistent 30/60/90/120 FPS cap.
 - [x] Responsive device safe-area RectTransform helper for notches and rounded corners.
 - [ ] Touch-first layout, responsive control arrangement and configurable sensitivity for all control types.
-- [ ] Quality presets, LODs, baked lighting and performance profiling.
+- [ ] LODs, baked lighting and performance profiling.
 - [ ] Android build settings, device profiling and performance testing.
 - [ ] Accessibility options, save validation and release testing.
 
