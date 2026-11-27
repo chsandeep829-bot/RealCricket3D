@@ -141,7 +141,7 @@ public class CricketMatchSetupController : MonoBehaviour
     private string TeamName(int index) => ValidTeamIndex(index) ? availableTeams[index] : "TEAM";
     private void UpdateStatus()
     {
-        if (setupStatus != null) setupStatus.text = TeamName(firstTeamIndex) + " vs " + TeamName(secondTeamIndex);
+        if (setupStatus != null) setupStatus.text = TeamName(firstTeamIndex) + " vs " + TeamName(secondTeamIndex) + "  •  " + selectedFormat.ToString().ToUpperInvariant();
     }
     private static void Swap(ref string a, ref string b) { string temp = a; a = b; b = temp; }
 }
