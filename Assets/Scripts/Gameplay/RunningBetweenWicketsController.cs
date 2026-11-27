@@ -22,6 +22,14 @@ public class RunningBetweenWicketsController : MonoBehaviour
     private ProceduralCricketPlayerMotion strikerMotion;
     private ProceduralCricketPlayerMotion nonStrikerMotion;
 
+    private void Awake()
+    {
+        if (strikerBatter != null)
+            strikerMotion = strikerBatter.GetComponent<ProceduralCricketPlayerMotion>();
+        if (nonStrikerBatter != null)
+            nonStrikerMotion = nonStrikerBatter.GetComponent<ProceduralCricketPlayerMotion>();
+    }
+
     public bool IsRunning => isRunning;
     public int QueuedRuns => queuedRuns;
     public bool IsStrikerOutOfCrease => strikerBatter != null && strikerCrease != null &&
@@ -62,6 +70,8 @@ public class RunningBetweenWicketsController : MonoBehaviour
     private IEnumerator RunRoutine()
     {
         isRunning = true;
+        if (strikerMotion != null) strikerMotion.SetMovementSpeed(1f);
+        if (nonStrikerMotion != null) nonStrikerMotion.SetMovementSpeed(1f);
 
         while (queuedRuns > 0 && !stopAfterCurrentRun &&
                !matchManager.IsInningsCompleted && !matchManager.IsMatchCompleted)
@@ -98,6 +108,8 @@ public class RunningBetweenWicketsController : MonoBehaviour
         }
 
         isRunning = false;
+        if (strikerMotion != null) strikerMotion.SetMovementSpeed(0f);
+        if (nonStrikerMotion != null) nonStrikerMotion.SetMovementSpeed(0f);
         stopAfterCurrentRun = false;
     }
 }
