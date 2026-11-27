@@ -524,6 +524,8 @@ public static class PrototypeSceneBuilder
                 controlsRoot.SetActive(true);
             },
             new Vector2(300f, 62f), new Color(0.12f, 0.20f, 0.34f, 1f), 21);
+        batButton.interactable = false;
+        bowlButton.interactable = false;
     }
 
     private static Text CreateMenuText(Transform parent, string value, Vector2 anchor,
