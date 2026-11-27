@@ -470,7 +470,7 @@ public static class PrototypeSceneBuilder
         panelRect.offsetMax = Vector2.zero;
         panel.GetComponent<Image>().color = new Color(0.025f, 0.055f, 0.10f, 0.97f);
 
-        CreateMenuText(panel.transform, "REALCRICKET3D  |  MATCH SETUP",
+        CreateMenuText(panel.transform, "CRICNOVA 3D  |  MATCH SETUP",
             new Vector2(0.5f, 0.88f), new Vector2(780f, 70f), 38);
 
         Text status = CreateMenuText(panel.transform, "INDIA vs AUSTRALIA",
@@ -605,9 +605,12 @@ public static class PrototypeSceneBuilder
         textRect.offsetMax = Vector2.zero;
         Text text = textObject.GetComponent<Text>();
         text.text = label;
+        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.alignment = TextAnchor.MiddleCenter;
         text.fontSize = 28;
+        text.fontStyle = FontStyle.Bold;
         text.color = Color.white;
+        text.raycastTarget = false;
     }
 
     private static void CreateRunOutZone(Vector3 position, MatchManager match,
