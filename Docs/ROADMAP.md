@@ -7,6 +7,7 @@ Unity project structure, an Editor greybox scene generator, first-pass batting/b
 - [x] Separate selectable Loft, Stroke, Push and Leave actions.
 - [x] Directional swipe aiming without silently changing shot selection.
 - [x] First-pass swing timing quality and hit-power feedback.
+- [x] Settled ordinary deliveries are recorded as legal dot balls; boundary scoring resolves the legal delivery once.
 - [ ] Ball-flight prediction, line/length-aware timing calibration and edge/miss outcomes.
 - [ ] Tune contact physics and timing windows in Unity playtests.
 
