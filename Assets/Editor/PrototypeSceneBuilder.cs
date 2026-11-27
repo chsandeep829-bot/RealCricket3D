@@ -88,6 +88,7 @@ public static class PrototypeSceneBuilder
         SetObjectReference(running, "nonStrikerCrease", CreateCreaseMarker("NonStrikerCrease", new Vector3(0f, 1f, 5.5f)));
         SetObjectReference(running, "matchManager", match);
         CreateRunOutZone(new Vector3(0f, 0.8f, 6.5f), match, running);
+        CreateStumpingZone(new Vector3(0f, 0.8f, -6.3f), match, running);
         CreateFielderThrowSetup(match, running);
         CreateCatchFielder("LeftSlipFielder", new Vector3(-4f, 0f, -1f), match);
         CreateCatchFielder("RightSlipFielder", new Vector3(4f, 0f, -1f), match);
@@ -236,14 +237,14 @@ public static class PrototypeSceneBuilder
         scoreText.text = "0/0  0.0";
         SetObjectReference(match, "scoreText", scoreText);
 
-        CreateButton(canvas.transform, "FAST", new Vector2(0.88f, 0.08f), variations.BowlFast);
-        CreateButton(canvas.transform, "SPIN", new Vector2(0.73f, 0.08f), variations.BowlOffSpin);
-        CreateButton(canvas.transform, "SHOT", new Vector2(0.58f, 0.08f), shots.PlaySelectedShot);
-        CreateButton(canvas.transform, "RUN", new Vector2(0.43f, 0.08f), running.RequestRun);
-        CreateButton(canvas.transform, "2 RUN", new Vector2(0.28f, 0.08f), running.RequestTwoRuns);
-        CreateButton(canvas.transform, "DRIVE", new Vector2(0.53f, 0.08f), shots.SelectDrive);
-        CreateButton(canvas.transform, "PULL", new Vector2(0.38f, 0.08f), shots.SelectPull);
-        CreateButton(canvas.transform, "LOFT", new Vector2(0.23f, 0.08f), shots.SelectLofted);
+        CreateButton(canvas.transform, "FAST", new Vector2(0.92f, 0.08f), variations.BowlFast);
+        CreateButton(canvas.transform, "SPIN", new Vector2(0.80f, 0.08f), variations.BowlOffSpin);
+        CreateButton(canvas.transform, "SHOT", new Vector2(0.68f, 0.08f), shots.PlaySelectedShot);
+        CreateButton(canvas.transform, "RUN", new Vector2(0.56f, 0.08f), running.RequestRun);
+        CreateButton(canvas.transform, "2 RUN", new Vector2(0.44f, 0.08f), running.RequestTwoRuns);
+        CreateButton(canvas.transform, "DRIVE", new Vector2(0.32f, 0.08f), shots.SelectDrive);
+        CreateButton(canvas.transform, "PULL", new Vector2(0.20f, 0.08f), shots.SelectPull);
+        CreateButton(canvas.transform, "LOFT", new Vector2(0.08f, 0.08f), shots.SelectLofted);
     }
 
     private static void CreateButton(Transform parent, string label, Vector2 anchor, UnityEngine.Events.UnityAction action)
@@ -286,6 +287,19 @@ public static class PrototypeSceneBuilder
         RunOutWicketZone runOut = zone.AddComponent<RunOutWicketZone>();
         SetObjectReference(runOut, "matchManager", match);
         SetObjectReference(runOut, "runningController", running);
+    }
+
+    private static void CreateStumpingZone(Vector3 position, MatchManager match,
+        RunningBetweenWicketsController running)
+    {
+        GameObject zone = new GameObject("WicketkeeperStumpingZone");
+        zone.transform.position = position;
+        BoxCollider collider = zone.AddComponent<BoxCollider>();
+        collider.isTrigger = true;
+        collider.size = new Vector3(1.5f, 1.8f, 0.8f);
+        StumpingWicketZone stumping = zone.AddComponent<StumpingWicketZone>();
+        SetObjectReference(stumping, "matchManager", match);
+        SetObjectReference(stumping, "runningController", running);
     }
 
     private static void CreateCatchFielder(string name, Vector3 position, MatchManager match)
