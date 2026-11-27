@@ -22,6 +22,7 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 - `Match/BoundaryScoringZone.cs`: awards configured boundary runs when a hit ball enters its trigger.
 - `Match/WicketTrigger.cs`: records a wicket when an unhit delivery enters the wicket trigger.
 - `UI/MobileCricketControls.cs`: exposes UI actions for shot selection, batting, pace/spin bowling variations and running.
+- `UI/SwipeBattingInput.cs`: reads drag gestures in the gameplay area and passes swipe direction to the shot selector.
 
 ## Match format defaults
 - T20: 20 overs per innings.
@@ -68,3 +69,15 @@ The generated prototype HUD includes a `PAUSE / RESUME` button in the upper-righ
 - Displays the current run rate (CRR) using completed legal balls.
 - During a chase, displays the target, runs still required, and required run rate (RRR).
 - Uses actual newline characters so each scoreboard item appears on its own line.
+
+
+## Swipe batting controls
+
+The generated HUD includes a transparent swipe area over the central gameplay view. Drag and release to play a shot:
+- Swipe up for a lofted shot.
+- Swipe down for a defensive, lower-loft shot.
+- Swipe right for a pull-style shot aimed toward the right.
+- Swipe left for a cut-style shot aimed toward the left.
+- Short gestures below the configured pixel threshold are ignored.
+
+The swipe surface is created behind the HUD buttons, so the existing FAST, SPIN, SHOT, RUN and shot-selection buttons remain clickable. Gesture mapping is a prototype control scheme; timing, shot choice and direction still need tuning and playtesting in Unity on a touch device.
