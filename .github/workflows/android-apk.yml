@@ -19,6 +19,10 @@ on:
       - "ProjectSettings/**"
       - ".github/workflows/android-apk.yml"
 
+concurrency:
+  group: realcricket3d-android-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
