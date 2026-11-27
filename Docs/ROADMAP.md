@@ -1,57 +1,52 @@
 # RealCricket3D development roadmap
 
 ## Current repository stage
-Unity project structure, an Editor greybox scene generator, first-pass batting/bowling/ball scripts, basic fielding and camera scripts, and an expanded local match manager.
+Unity project structure, an Editor greybox scene generator, first-pass batting/bowling/ball scripts, basic fielding and camera scripts, and an expanded local match manager. Source foundations for the first five stages are now present; Unity integration and gameplay validation remain outstanding.
 
-## Milestone 1 — Playable local prototype
-- [x] Unity project structure and prototype scene generator.
-- [x] First-pass ball Rigidbody, batting and bowling controls.
-- [x] Basic scoreboard, boundary and wicket trigger prototypes.
-- [x] T20/ODI/Test format configuration and innings score tracking.
-- [x] Two-innings limited-overs flow and target chase.
-- [x] Simplified four-innings Test flow and final-innings target.
-- [ ] Generate the scene in Unity and resolve any Editor compile/import issues.
-- [ ] Play-test ball physics, scoring triggers and delivery timing.
+## Stage 1 — Batting and ball-contact feel
+- [x] Separate selectable Loft, Stroke, Push and Leave actions.
+- [x] Directional swipe aiming without silently changing shot selection.
+- [x] First-pass swing timing quality and hit-power feedback.
+- [ ] Ball-flight prediction, line/length-aware timing calibration and edge/miss outcomes.
+- [ ] Tune contact physics and timing windows in Unity playtests.
 
-## Milestone 2 — Cricket rules and match flow
-- [x] Legal delivery, wide, no-ball, bye and leg-bye scoring entry points.
-- [x] Innings transitions, target chase and basic match result.
-- [x] Odd-run strike rotation and end changes after six legal balls.
-- [x] Manual running-between-wickets controller with queued one/two-run requests.
-- [x] Generate two batter placeholders, crease markers and one/two-run controls in the prototype scene.
-- [x] Generate basic catch zones, a non-striker run-out zone and a keeper stumping zone.
-- [ ] Play-test and tune all trigger zones and running physics in Unity.
-- [ ] Add and tune catch trigger volumes and run-out wicket zones in the generated scene.
-- [x] Basic caught dismissal trigger for a descending airborne hit ball.
-- [x] Basic run-out trigger while batters are actively running.
-- [x] Basic keeper stumping trigger for an unhit ball reaching the keeper while striker is outside the crease tolerance.
-- [ ] Keeper catches, throw animations and overthrow rules.
-- [ ] Better wicket/no-ball/wide detection and dismissal validation.
-- [ ] Test declarations, follow-on and day/session rules.
+## Stage 2 — Bowling depth
+- [x] Fast, swing, off-spin, leg-spin and slow delivery profiles.
+- [x] Adjustable bowling line and length controls exposed to mobile UI.
+- [ ] Tune swing, seam and spin movement with realistic pitch bounce.
+- [ ] Add release timing, run-up and delivery animations.
 
-## Milestone 3 — Gameplay depth
-- [ ] Shot timing windows: defend, drive, cut, pull, sweep and loft.
-- [ ] Pace, swing, seam and spin bowling variations with tuned physics.
-- [x] Fielder pickup trigger and throw toward wicket for run-out attempts.
-- [ ] Fielder positioning, ground fielding and wicketkeeping AI.
-- [ ] Player movement, running between wickets and replay camera.
-
-## Milestone 4 — Presentation
+## Stage 3 — Player and fielding presentation
 - [x] Reusable Animator parameter/trigger driver for player actions.
-- [ ] Original player rigs, animation clips and complete animation state machines.
-- [ ] Stadium art, lighting, crowd ambience, commentary and effects.
-- [x] Pause/resume controller with optional pause panel.
-- [ ] Menus, team selection, toss and match summary.
-- [ ] Original high-quality 3D assets and optimized materials.
+- [x] Existing prototype fielder chase, catch, throw, run-out and stumping hooks.
+- [ ] Add original player rigs and authored animation clips/state machines.
+- [ ] Improve fielding positioning, pickup, relay throws and wicketkeeping AI.
+- [ ] Integrate animations with ball, batting and running state.
 
-## Milestone 5 — Android release preparation
-- [x] Mobile UI action methods for shot selection, bowling variations and running.
+## Stage 4 — Broadcast presentation
+- [x] Camera director foundation for broadcast, bowler, batting and ball-follow views.
+- [x] Existing pause/resume controller.
+- [ ] Build and assign original camera rigs and automatic event-driven camera cuts.
+- [ ] Add score overlays, over/innings breaks, boundary/wicket celebrations and replay recording.
+- [ ] Add licensed/original commentary, crowd audio, stadium art and effects.
+
+## Stage 5 — Match modes and career foundations
+- [x] Match setup controller for team selection, T20/ODI/Test selection and toss decision.
+- [x] Local career profile persistence for player name and basic statistics.
+- [x] Four-team knockout tournament bracket with local save.
+- [ ] Build polished menu screens and connect all setup/result callbacks.
+- [ ] Integrate tournament fixtures and match results automatically.
+- [ ] Expand career mode with seasons, unlocks, player progression and save migration.
+- [ ] Complete Test declarations, follow-on, days and session rules.
+
+## Stage 6 — Android release preparation
+- [x] Mobile UI action methods for shot selection, bowling variations, bowling line/length and running.
 - [ ] Touch-first layout and configurable sensitivity.
 - [ ] Quality presets, LODs, baked lighting and performance profiling.
 - [ ] Android build settings, device profiling and performance testing.
-- [ ] Save data, accessibility options and release testing.
+- [ ] Accessibility options, save validation and release testing.
 
-## Milestone 6 — Online features (later)
+## Stage 7 — Online features (later)
 - [ ] Matchmaking and authoritative match simulation.
 - [ ] Reconnect handling and fair-play/anti-cheat design.
 - [ ] Online services only after offline match simulation is stable.
@@ -60,17 +55,16 @@ Unity project structure, an Editor greybox scene generator, first-pass batting/b
 A milestone is complete only after its scene and assets are integrated in Unity, builds successfully, and is tested in the Unity Editor and on target Android devices. Repository scripts alone do not constitute a finished game.
 
 ## Visual and gameplay target — premium 3D cricket simulation
+The product target is a polished, broadcast-style mobile cricket simulation in the same broad genre as WCC3 and Real Cricket. RealCricket3D must use its own name, UI, player likenesses, stadium designs, audio, animations and other original assets; this is an inspiration target, not a recreation of proprietary content.
 
-The product target is a polished, broadcast-style mobile cricket simulation in the same broad genre as WCC3. RealCricket3D must use its own name, UI, player likenesses, stadium designs, audio, animations and other original assets; this is an inspiration target, not a recreation of proprietary WCC3 content.
-
-### Required experience, in priority order
-1. **Core batting feel:** separate selectable Loft, Stroke, Push and Leave actions; additional grounded/aerial shot types; timing windows based on ball line, length and arrival time; directional swipe aiming that never silently changes the selected shot; meaningful edge, miss, mistime and clean-hit outcomes.
-2. **Bowling depth:** choose delivery type, line, length, pace and release; implement swing/seam/spin movement with readable flight and bounce.
-3. **Player presentation:** rigged 3D batters, bowlers, wicketkeepers and fielders with authored run-up, delivery, batting, catch, dive, throw and appeal animations.
-4. **Match broadcast:** camera cuts and follow cameras, score overlays, over/innings breaks, wickets and boundary celebrations, replay system, commentary and crowd audio.
-5. **Full match modes:** team selection, toss, T20/ODI/Test rules, tournaments, career progression and local save data.
-6. **Mobile polish:** landscape touch HUD, responsive layouts, graphics presets, device performance profiling and robust Android builds.
-7. **Online play:** only after offline simulation is reliable; use server-authoritative match state and reconnect handling.
+### Required experience
+1. Core batting feel with distinct shots, timing, line/length awareness and meaningful contact outcomes.
+2. Bowling depth with delivery type, line, length, pace, swing, seam and spin.
+3. Rigged batters, bowlers, wicketkeepers and fielders with authored animations.
+4. Broadcast cameras, score overlays, innings presentation, celebrations, replays, commentary and crowd.
+5. Team selection, toss, T20/ODI/Test, tournaments, career progression and local save data.
+6. Landscape touch HUD, responsive layouts, graphics presets, device profiling and robust Android builds.
+7. Online play only after offline simulation is reliable, using server-authoritative match state.
 
 ### Quality gates
 - Do not mark a feature complete from source code alone.
