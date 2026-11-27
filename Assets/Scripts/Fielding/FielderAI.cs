@@ -13,7 +13,7 @@ public class FielderAI : MonoBehaviour
     [SerializeField] private UnityEvent onBallCollected;
 
     private CricketBall targetBall;
-    private bool collected;
+    private bool collected;\n    private ProceduralCricketPlayerMotion playerMotion;
 
     public bool IsBusy => targetBall != null && !collected;
 
@@ -31,7 +31,7 @@ public class FielderAI : MonoBehaviour
 
     private void Update()
     {
-        if (targetBall == null || collected) return;
+        if (targetBall == null || collected)\n        {\n            if (playerMotion != null) playerMotion.SetMovementSpeed(0f);\n            return;\n        }
 
         Vector3 target = targetBall.transform.position;
         target.y = groundHeight;
