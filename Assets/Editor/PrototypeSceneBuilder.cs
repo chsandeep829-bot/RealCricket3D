@@ -57,6 +57,18 @@ public static class PrototypeSceneBuilder
         GameObject matchObject = new GameObject("MatchManager");
         MatchManager match = matchObject.AddComponent<MatchManager>();
 
+        // Keep the offline match setup, career profile and tournament save systems
+        // in the generated scene so they can be wired to menus without manual creation.
+        CricketMatchSetupController matchSetup = matchObject.AddComponent<CricketMatchSetupController>();
+        SetObjectReference(matchSetup, "matchManager", match);
+        CricketCareerSaveSystem careerSave = matchObject.AddComponent<CricketCareerSaveSystem>();
+        CricketTournamentManager tournament = matchObject.AddComponent<CricketTournamentManager>();
+        CricketMatchProgressionBridge progression =
+            matchObject.AddComponent<CricketMatchProgressionBridge>();
+        SetObjectReference(progression, "matchManager", match);
+        SetObjectReference(progression, "careerSave", careerSave);
+        SetObjectReference(progression, "tournament", tournament);
+
         GameObject bowlingObject = new GameObject("BowlingController");
         BowlingController bowling = bowlingObject.AddComponent<BowlingController>();
         SetObjectReference(bowling, "ballPrefab", ballPrefab);
