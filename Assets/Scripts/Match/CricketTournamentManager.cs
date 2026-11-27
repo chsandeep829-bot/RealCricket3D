@@ -64,6 +64,17 @@ public class CricketTournamentManager : MonoBehaviour
         SaveTournament();
     }
 
+    public void RecordWinnerFromMatch(MatchManager match)
+    {
+        if (match == null || !match.IsMatchCompleted) return;
+        string result = match.MatchResultText;
+        if (result == "MATCH DRAWN" || result == "MATCH TIED") return;
+        if (result.StartsWith(match.TeamAName, StringComparison.OrdinalIgnoreCase))
+            RecordCurrentMatchWinner(match.TeamAName);
+        else if (result.StartsWith(match.TeamBName, StringComparison.OrdinalIgnoreCase))
+            RecordCurrentMatchWinner(match.TeamBName);
+    }
+
     public string GetChampion() => IsComplete ? state.winners[2] : string.Empty;
 
     public void SaveTournament()
