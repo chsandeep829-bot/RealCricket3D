@@ -50,3 +50,8 @@ A milestone is complete only after its scene and assets are integrated in Unity,
 - Add `CricketPlayerAnimator` to a rig with an Animator Controller. The controller must define the configured float and trigger parameters. This script does not create animation clips or a rig.
 - Add `CricketMatchPauseController` to a scene object, assign an optional pause panel, and connect Pause/Resume buttons to its public methods.
 - `MobileCricketControls` exposes methods for each shot, bowling variation, and running action. Assign the relevant scene components in the Inspector before wiring UI buttons.
+
+## Scoreboard improvements
+- Displays the current run rate (CRR) using completed legal balls.
+- During a chase, displays the target, runs still required, and required run rate (RRR).
+- Uses actual newline characters so each scoreboard item appears on its own line.
