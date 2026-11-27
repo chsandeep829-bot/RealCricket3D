@@ -62,6 +62,7 @@ public static class PrototypeSceneBuilder
         // in the generated scene so they can be wired to menus without manual creation.
         CricketMatchSetupController matchSetup = matchObject.AddComponent<CricketMatchSetupController>();
         SetObjectReference(matchSetup, "matchManager", match);
+        SetObjectReference(matchSetup, "tournamentManager", tournament);
         CricketCareerSaveSystem careerSave = matchObject.AddComponent<CricketCareerSaveSystem>();
         CricketTournamentManager tournament = matchObject.AddComponent<CricketTournamentManager>();
         CricketMatchProgressionBridge progression =
@@ -330,6 +331,12 @@ public static class PrototypeSceneBuilder
 
         CreateButton(panel.transform, "TOSS",
             new Vector2(0.50f, 0.23f), setup.PerformToss);
+        CreateButton(panel.transform, "START 4-TEAM CUP",
+            new Vector2(0.50f, 0.31f), () =>
+            {
+                setup.CreateFourTeamTournamentAndStart();
+                panel.SetActive(false);
+            });
 
         CreateButton(panel.transform, "WINNER BAT",
             new Vector2(0.30f, 0.08f), () =>
