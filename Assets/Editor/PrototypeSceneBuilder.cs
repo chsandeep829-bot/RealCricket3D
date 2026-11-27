@@ -18,6 +18,16 @@ public static class PrototypeSceneBuilder
     [MenuItem("RealCricket3D/Build Prototype Scene")]
     public static void BuildPrototypeScene()
     {
+        BuildPrototypeSceneInternal(true);
+    }
+
+    public static void BuildPrototypeSceneForBuild()
+    {
+        BuildPrototypeSceneInternal(false);
+    }
+
+    private static void BuildPrototypeSceneInternal(bool showDialog)
+    {
         EnsureFolder(SceneFolder);
         EnsureFolder(PrefabFolder);
 
@@ -100,11 +110,14 @@ public static class PrototypeSceneBuilder
         AssetDatabase.Refresh();
 
         Selection.activeObject = AssetDatabase.LoadAssetAtPath<SceneAsset>(ScenePath);
-        EditorUtility.DisplayDialog(
-            "RealCricket3D",
-            "Prototype scene created at " + ScenePath +
-            "\nPress Play to test the greybox scene. Replace primitive models and tune physics before treating it as a finished game.",
-            "OK");
+        if (showDialog)
+        {
+            EditorUtility.DisplayDialog(
+                "RealCricket3D",
+                "Prototype scene created at " + ScenePath +
+                "\nPress Play to test the greybox scene. Replace primitive models and tune physics before treating it as a finished game.",
+                "OK");
+        }
     }
 
     private static void CreateGround()
