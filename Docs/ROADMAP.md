@@ -46,7 +46,9 @@ Unity project structure, an Editor greybox scene generator, first-pass batting/b
 ## Stage 6 — Android release preparation
 - [x] Mobile UI action methods for shot selection, bowling variations, bowling line/length and running.
 - [x] Persisted configurable batting swipe sensitivity (0.5×–2×) with slider and reset hooks.
-- [ ] Touch-first layout, responsive safe-area layout and configurable sensitivity for all control types.
+- [x] Runtime Low/Medium/High quality controls and persistent 30/60/90/120 FPS cap.
+- [x] Responsive device safe-area RectTransform helper for notches and rounded corners.
+- [ ] Touch-first layout, responsive control arrangement and configurable sensitivity for all control types.
 - [ ] Quality presets, LODs, baked lighting and performance profiling.
 - [ ] Android build settings, device profiling and performance testing.
 - [ ] Accessibility options, save validation and release testing.
