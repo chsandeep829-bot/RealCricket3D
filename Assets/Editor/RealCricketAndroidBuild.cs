@@ -8,9 +8,9 @@ using UnityEngine;
 
 public static class RealCricketAndroidBuild
 {
-    private const string LogoPath = "Assets/Resources/Branding/CricnovaLogo.jpg";
+    private const string LogoPath = "Assets/Resources/Branding/CricnovaLogo.png";
     private const string IconBackgroundPath = "Assets/Resources/Branding/CricnovaIconBackground.png";
-    private const string SplashLogoPath = "Assets/Resources/Branding/CricnovaSplashLogo.jpg";
+    private const string SplashLogoPath = "Assets/Resources/Branding/CricnovaSplashLogo.png";
     private const string OutputDirectory = "Builds/Android";
     private const string OutputPath = OutputDirectory + "/CRICNOVA3D.apk";
 
@@ -83,29 +83,27 @@ public static class RealCricketAndroidBuild
 
     private static void ConfigureBrandIdentity()
     {
-        if (!File.Exists(LogoPath))
-            throw new System.Exception("Missing CRICNOVA logo asset: " + LogoPath);
+        // The previous repository JPEG was corrupt (Unity's importer reported
+        // an invalid JPEG structure). Generate a clean, deterministic PNG
+        // crest during the build so CI never depends on a broken binary asset.
+        // Replace this procedural fallback with the supplied high-resolution
+        // shield artwork once that source file is re-uploaded to the repository.
+        CreateCricnovaLogoAsset();
 
-        // Keep the source logo as a Texture2D so Resources.Load<Texture2D> in
-        // the in-game UI continues to work. Create a separate Sprite asset for
-        // Unity's native splash-screen logo slot.
         TextureImporter logoImporter = AssetImporter.GetAtPath(LogoPath) as TextureImporter;
         if (logoImporter == null)
-            throw new System.Exception("Unity could not import the CRICNOVA logo texture.");
-
-        if (logoImporter.textureType != TextureImporterType.Default || logoImporter.mipmapEnabled)
-        {
-            logoImporter.textureType = TextureImporterType.Default;
-            logoImporter.mipmapEnabled = false;
-            logoImporter.alphaIsTransparency = false;
-            logoImporter.maxTextureSize = 2048;
-            logoImporter.SaveAndReimport();
-        }
+            throw new System.Exception("Unity could not import the generated CRICNOVA logo texture.");
+        logoImporter.textureType = TextureImporterType.Default;
+        logoImporter.mipmapEnabled = false;
+        logoImporter.alphaIsTransparency = true;
+        logoImporter.maxTextureSize = 1024;
+        logoImporter.textureCompression = TextureImporterCompression.Uncompressed;
+        logoImporter.SaveAndReimport();
 
         AssetDatabase.ImportAsset(LogoPath, ImportAssetOptions.ForceUpdate);
         Texture2D logoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(LogoPath);
-        if (logoTexture == null)
-            throw new System.Exception("CRICNOVA logo did not import as a Texture2D.");
+        if (logoTexture == null || logoTexture.width != 512 || logoTexture.height != 512)
+            throw new System.Exception("Generated CRICNOVA logo did not import as a valid 512x512 Texture2D.");
 
         Directory.CreateDirectory(Path.GetDirectoryName(SplashLogoPath));
         File.Copy(LogoPath, SplashLogoPath, true);
@@ -137,6 +135,121 @@ public static class RealCricketAndroidBuild
         };
 
         Debug.Log("CRICNOVA branding configured: adaptive Android icon and native splash logo.");
+    }
+
+    private static void CreateCricnovaLogoAsset()
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(LogoPath));
+        const int size = 512;
+        Color32 clear = new Color32(0, 0, 0, 0);
+        Color32 gold = new Color32(255, 190, 45, 255);
+        Color32 deepGold = new Color32(120, 73, 12, 255);
+        Color32 black = new Color32(8, 10, 16, 255);
+        Color32 white = new Color32(255, 244, 215, 255);
+        Color32[] pixels = new Color32[size * size];
+        for (int i = 0; i < pixels.Length; i++) pixels[i] = clear;
+
+        // Shield silhouette, double gold edge and dark inset.
+        Vector2Int[] shield = {
+            new Vector2Int(256, 486), new Vector2Int(440, 405),
+            new Vector2Int(421, 170), new Vector2Int(256, 92),
+            new Vector2Int(91, 170), new Vector2Int(72, 405)
+        };
+        FillPolygon(pixels, size, shield, deepGold);
+        Vector2Int[] inner = {
+            new Vector2Int(256, 458), new Vector2Int(414, 389),
+            new Vector2Int(397, 187), new Vector2Int(256, 122),
+            new Vector2Int(115, 187), new Vector2Int(98, 389)
+        };
+        FillPolygon(pixels, size, inner, gold);
+        Vector2Int[] core = {
+            new Vector2Int(256, 432), new Vector2Int(388, 373),
+            new Vector2Int(374, 203), new Vector2Int(256, 143),
+            new Vector2Int(138, 203), new Vector2Int(124, 373)
+        };
+        FillPolygon(pixels, size, core, black);
+
+        // Crown above the monogram.
+        FillPolygon(pixels, size, new[] {
+            new Vector2Int(177, 300), new Vector2Int(163, 235),
+            new Vector2Int(211, 264), new Vector2Int(256, 207),
+            new Vector2Int(301, 264), new Vector2Int(349, 235),
+            new Vector2Int(335, 300)
+        }, gold);
+        FillRect(pixels, size, 178, 294, 334, 314, gold);
+
+        // Original CN monogram in a clean geometric stroke style.
+        DrawLine(pixels, size, 188, 356, 188, 326, white, 13);
+        DrawLine(pixels, size, 188, 356, 220, 356, white, 13);
+        DrawLine(pixels, size, 188, 326, 220, 326, white, 13);
+        DrawLine(pixels, size, 242, 326, 242, 356, white, 13);
+        DrawLine(pixels, size, 242, 326, 278, 356, white, 13);
+        DrawLine(pixels, size, 278, 356, 278, 326, white, 13);
+
+        // Cricket bat and red-gold ball mark.
+        DrawLine(pixels, size, 298, 248, 346, 198, gold, 17);
+        DrawLine(pixels, size, 346, 198, 362, 182, white, 10);
+        FillCircle(pixels, size, 151, 250, 22, gold);
+        DrawLine(pixels, size, 137, 238, 164, 262, deepGold, 4);
+        DrawLine(pixels, size, 139, 258, 161, 237, deepGold, 4);
+
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        texture.SetPixels32(pixels);
+        texture.Apply(false, false);
+        File.WriteAllBytes(LogoPath, texture.EncodeToPNG());
+        Object.DestroyImmediate(texture);
+        AssetDatabase.ImportAsset(LogoPath, ImportAssetOptions.ForceUpdate);
+    }
+
+    private static void FillPolygon(Color32[] pixels, int size, Vector2Int[] points, Color32 color)
+    {
+        for (int y = 0; y < size; y++)
+        for (int x = 0; x < size; x++)
+        {
+            bool inside = false;
+            for (int i = 0, j = points.Length - 1; i < points.Length; j = i++)
+            {
+                Vector2Int a = points[i], b = points[j];
+                if (((a.y > y) != (b.y > y)) &&
+                    x < (b.x - a.x) * (y - a.y) / (float)(b.y - a.y) + a.x)
+                    inside = !inside;
+            }
+            if (inside) pixels[y * size + x] = color;
+        }
+    }
+
+    private static void FillRect(Color32[] pixels, int size, int x0, int y0, int x1, int y1, Color32 color)
+    {
+        for (int y = Mathf.Max(0, y0); y < Mathf.Min(size, y1); y++)
+        for (int x = Mathf.Max(0, x0); x < Mathf.Min(size, x1); x++)
+            pixels[y * size + x] = color;
+    }
+
+    private static void FillCircle(Color32[] pixels, int size, int cx, int cy, int radius, Color32 color)
+    {
+        for (int y = -radius; y <= radius; y++)
+        for (int x = -radius; x <= radius; x++)
+            if (x * x + y * y <= radius * radius)
+            {
+                int px = cx + x, py = cy + y;
+                if (px >= 0 && px < size && py >= 0 && py < size)
+                    pixels[py * size + px] = color;
+            }
+    }
+
+    private static void DrawLine(Color32[] pixels, int size, int x0, int y0, int x1, int y1, Color32 color, int thickness)
+    {
+        int dx = Mathf.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+        int dy = -Mathf.Abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+        int error = dx + dy;
+        while (true)
+        {
+            FillCircle(pixels, size, x0, y0, Mathf.Max(1, thickness / 2), color);
+            if (x0 == x1 && y0 == y1) break;
+            int twice = 2 * error;
+            if (twice >= dy) { error += dy; x0 += sx; }
+            if (twice <= dx) { error += dx; y0 += sy; }
+        }
     }
 
     private static void ConfigureAdaptiveLauncherIcon(Texture2D logo)
