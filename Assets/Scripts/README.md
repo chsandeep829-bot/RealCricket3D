@@ -37,7 +37,7 @@ This folder contains the Unity gameplay foundation for RealCricket3D.
 4. Assign missing references in the Inspector. For timing feedback, assign a Unity UI Text to BattingController's optional Timing Feedback field.
 5. Add camera rigs and assign them to CricketBroadcastDirector. Use at least three camera entries for broadcast, bowler and batting views.
 6. Add CricketMatchSetupController to a menu object, assign MatchManager, and wire team selection, format, toss and start buttons.
-7. Add CricketCareerSaveSystem and CricketTournamentManager to a persistent scene object. Call their public methods from match-result and tournament screens.
+7. Add CricketCareerSaveSystem and CricketTournamentManager to a persistent scene object. Call `RecordCompletedMatch(matchManager, playerTeamName)` from the career result screen. Call `RecordWinnerFromMatch(matchManager)` once from the tournament result screen; start each bracket with `CreateTournament(team1, team2, team3, team4)`. Assign the match setup controller and wire its public methods to actual UI controls.
 
 **Important:** the scene generator replaces the generated prototype scene. Save manual scene changes before running it again.
 
