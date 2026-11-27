@@ -16,10 +16,10 @@ PlayerSettings:
   m_SplashScreenBackgroundColor: {r: 0.008, g: 0.012, b: 0.02, a: 1}
   companyName: CRICNOVA STUDIOS
   productName: CRICNOVA 3D
-  bundleVersion: 0.1.0
+  bundleVersion: 0.2.0
   applicationIdentifier:
     Android: com.sandeep.realcricket3d
-  AndroidBundleVersionCode: 1
+  AndroidBundleVersionCode: 2
   AndroidMinSdkVersion: 23
   AndroidTargetSdkVersion: 35
   AndroidTargetArchitectures: 2
