@@ -28,7 +28,15 @@ public static class RealCricketAndroidBuild
 
         Texture2D cricnovaIcon = Resources.Load<Texture2D>("Branding/CricnovaLogo");
         if (cricnovaIcon != null)
-            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Android, new[] { cricnovaIcon });
+        {
+            int[] iconSizes = PlayerSettings.GetIconSizes(
+                UnityEditor.Build.NamedBuildTarget.Android, IconKind.Application);
+            Texture2D[] appIcons = new Texture2D[iconSizes.Length];
+            for (int i = 0; i < appIcons.Length; i++)
+                appIcons[i] = cricnovaIcon;
+            PlayerSettings.SetIcons(
+                UnityEditor.Build.NamedBuildTarget.Android, appIcons, IconKind.Application);
+        }
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
 
