@@ -24,7 +24,7 @@ public class FielderCatchZone : MonoBehaviour
         if (catchCompleted || matchManager == null) return;
 
         CricketBall ball = other.GetComponentInParent<CricketBall>();
-        if (ball == null || !ball.HasBeenHit || ball.Body == null) return;
+        if (ball == null || !ball.HasBeenHit || ball.DismissalRecorded || ball.Body == null) return;
 
         float height = ball.transform.position.y;
         if (height < minimumCatchHeight || height > maximumCatchHeight) return;
